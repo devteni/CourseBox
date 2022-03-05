@@ -6,26 +6,21 @@ const data = [
         "link": "/dashboard"
     },
     {
-        "text": "Dashboard",
+        "text": "Courses",
         "link": "/dashboard"
     },
     {
-        "text": "Dashboard",
+        "text": "My Profile",
         "link": "/dashboard"
     },
     {
-        "text": "Dashboard",
+        "text": "Setting",
         "link": "/dashboard"
     },
     {
-        "text": "Dashboard",
+        "text": "Classroom",
         "link": "/dashboard"
     },
-    {
-        "text": "Dashboard",
-        "link": "/dashboard"
-    },
-
 ]
 
 const Sidebar = () => {

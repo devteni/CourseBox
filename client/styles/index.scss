@@ -37,6 +37,10 @@ li {
     list-style-type: none;
     text-transform: capitalize;
     cursor: pointer;
+
+    &:hover {
+      text-decoration: underline;
+    }
   
     & > * {
       text-decoration: none;

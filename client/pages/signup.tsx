@@ -60,7 +60,9 @@ const Signup: NextPage = () => {
           <div className="lg:w-1/2 lg:mx-auto mx-2 my-16 border-2 py-6 px-4 ">
             <>
               <h1 className="text-xl lg:text-2xl text-left">
-                Welcome to <span className="text-[#0070f3]">CourseBox</span>
+                Welcome to <span className="text-[#0070f3]">
+                  <a href="/" className="hover:underline text-blue-700 cursor-pointer">CourseBox</a>
+                  </span>
               </h1>
               <p className="text-gray-500 text-left">
                 Manage your stocks on the go
