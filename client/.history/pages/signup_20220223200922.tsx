@@ -61,9 +61,7 @@ const Signup: NextPage = () => {
             <>
               <h1 className="text-xl lg:text-2xl text-left">
                 Welcome to <span className="text-[#0070f3]">
-                  <Link href="/">
-                    <a className="hover:underline text-blue-700 cursor-pointer">CourseBox</a>
-                  </Link>
+                  <a href="/" className="hover:underline text-blue-700 cursor-pointer">CourseBox</a>
                   </span>
               </h1>
               <p className="text-gray-500 text-left">
