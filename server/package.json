@@ -28,6 +28,7 @@
     "@nestjs/mapped-types": "*",
     "@nestjs/passport": "^8.2.1",
     "@nestjs/platform-express": "^8.0.0",
+    "@prisma/client": "^3.11.1",
     "bcryptjs": "^2.4.3",
     "class-validator": "^0.13.2",
     "global": "^4.4.0",
