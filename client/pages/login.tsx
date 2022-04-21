@@ -71,7 +71,7 @@ const Login: NextPage = () => {
                         value={values.email}
                         onChange={handleChange}
                         onBlur={handleBlur}
-                        className="py-3 px-5 w-full border-solid border-2 rounded-sm rounded-sm outline-none appearance-none focus:ring-1 focus:border-blue-700"
+                        className="py-3 px-5 w-full border-solid border-2 rounded-sm outline-none appearance-none focus:ring-1 focus:border-blue-700"
                         required
                       />
                       {errors.email && touched.email ? (
@@ -92,7 +92,7 @@ const Login: NextPage = () => {
                         value={values.password}
                         onChange={handleChange}
                         onBlur={handleBlur}
-                        className="py-3 px-5 w-full border-solid border-2 rounded-sm rounded-sm outline-none appearance-none focus:ring-1 focus:border-blue-700"
+                        className="py-3 px-5 w-full border-solid border-2 rounded-sm outline-none appearance-none focus:ring-1 focus:border-blue-700"
                         required
                       />
                       {errors.password && touched.password ? (

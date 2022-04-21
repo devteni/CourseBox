@@ -57,7 +57,7 @@ const Signup: NextPage = () => {
         } = formik;
 
         return (
-          <div className="lg:w-1/2 lg:mx-auto mx-2 my-16 border-2 py-6 px-4 ">
+          <div className="lg:w-1/2 lg:mx-auto mx-2 my-16 border-2 py-6 px-4">
             <>
               <h1 className="text-xl lg:text-2xl text-left">
                 Welcome to <span className="text-[#0070f3]">
@@ -67,7 +67,7 @@ const Signup: NextPage = () => {
                   </span>
               </h1>
               <p className="text-gray-500 text-left">
-                Manage your stocks on the go
+                Manage your learning at a go!
               </p>
 
               <div className="md:flex-1 flex-auto flex-wrap mt-6">
