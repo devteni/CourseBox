@@ -6,31 +6,22 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mysql"
   url      = env("DATABASE_URL")
 }
 
-model Student {
+model User {
   id Int @id @default(autoincrement())
   firstName String
   lastName String
-  matricNumber String
+  email String
+  uniqueNumber String
   password String
   department String
-  access_token String
-  createdAt DateTime @default(now())
-  modifiedAt DateTime @default(now())
-}
-
-model Lecturer {
-  id Int @id @default(autoincrement())
-  firstName String
-  lastName String
-  about String
-  password String
-  department String
-  access_token String
+  school String
   courses Course[]
+  role String
+  access_token String?
   createdAt DateTime @default(now())
   modifiedAt DateTime @default(now())
 }
@@ -39,9 +30,9 @@ model Course {
   id Int @id @default(autoincrement())
   courseCode String
   courseName String
-  lecturerId Int
+  userId Int
   courseMaterial CourseMaterial[]
-  lecturer Lecturer @relation(fields: [lecturerId], references: [id])
+  lecturer User @relation(fields: [userId], references: [id])
   createdAt DateTime @default(now())
   modifiedAt DateTime @default(now())
 }
@@ -49,13 +40,14 @@ model Course {
 model CourseMaterial {
   id Int @id @default(autoincrement())
   title String
+  description String
   fileId Int
   courseId Int
   course Course @relation(fields: [courseId], references: [id])
-  file Files @relation(fields: [fileId], references: [id])
+  file File @relation(fields: [fileId], references: [id])
 }
 
-model Files {
+model File {
   id Int @id @default(autoincrement())
   fileName String
   url String
