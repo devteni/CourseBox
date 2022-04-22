@@ -3,12 +3,14 @@ import { UsersService } from '../users/users.service';
 import * as bcrypt from 'bcrypt';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
+import { PrismaService } from 'src/prisma.service';
 @Injectable()
 export class AuthService {
   constructor(
     private usersService: UsersService,
     private jwt: JwtService,
     private configService: ConfigService,
+    private prisma: PrismaService,
   ) {}
 
   async validateUser(email: string, pass: string): Promise<any> {
@@ -25,6 +27,14 @@ export class AuthService {
   async login(user: any) {
     const jwtPayload = { sub: user.id };
     const token = await this.generateAccessToken(jwtPayload);
+    await this.prisma.user.update({
+      where: {
+        id: user.id,
+      },
+      data: {
+        access_token: token,
+      },
+    });
     return { token };
   }
 
