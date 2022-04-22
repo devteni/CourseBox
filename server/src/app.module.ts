@@ -7,10 +7,12 @@ import { CoursesModule } from './modules/courses/courses.module';
 import { FilesModule } from './modules/files/files.module';
 import { UsersModule } from './modules/users/users.module';
 import { AdminModule } from './modules/admin/admin.module';
+import config from './config';
 @Module({
   imports: [
     AuthModule,
     ConfigModule.forRoot({
+      load: [config],
       isGlobal: true,
     }),
     AdminModule,

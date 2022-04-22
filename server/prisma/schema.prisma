@@ -20,7 +20,7 @@ model User {
   department String
   school String
   courses Course[]
-  role String
+  role Role
   access_token String?
   createdAt DateTime @default(now())
   modifiedAt DateTime @default(now())
@@ -61,4 +61,8 @@ model Admin {
   password String
   school String
   department String
+}
+enum Role {
+ STUDENT
+ LECTURER
 }

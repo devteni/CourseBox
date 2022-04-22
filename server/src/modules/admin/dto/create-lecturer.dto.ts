@@ -1,4 +1,5 @@
 import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
+import { Role } from 'src/modules/users/enums/role.enum';
 
 export class createLecturerDto {
   @IsString()
@@ -17,7 +18,7 @@ export class createLecturerDto {
   department: string;
 
   @IsString()
-  role: string;
+  role: Role;
 
   @IsString()
   school: string;
