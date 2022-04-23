@@ -2,6 +2,12 @@ import type { NextPage } from "next";
 import Link from 'next/link';
 import * as yup from 'yup';
 import { Form, Field, Formik } from 'formik';
+import { useAppSelector, useAppDispatch } from "../../hooks";
+import { login, reset } from "../../slices/auth/auth";
+import Spinner from "../../components/Spinner";
+import { useRouter } from "next/router";
+import { useState, useEffect } from "react";
+
 
 const LogInSchema = yup.object().shape({
   email: yup.string().email().required('Email is required'),
@@ -17,19 +23,31 @@ const initialValues = {
 };
 
 const Login: NextPage = () => {
+  const dispatch = useAppDispatch();
+  const router = useRouter();
+  const [err, setErr] = useState('');
+  
+  const { user, isError, isSuccess, isLoading, message } = useAppSelector((state) => state.auth);
   const validBtn =
     'text-white p-4 font-bold tracking-tighter bg-blue-700 w-full mt-6 outline-none appearance-none border-none focus:ring-4 focus:ring-gray-400';
   const disabledBtn =
     'text-white p-4 font-bold tracking-tighter bg-gray-500 w-full mt-6 outline-none appearance-none border-none focus:ring-4 focus:ring-gray-400';
+  
+    useEffect(() => {
+      if(user) router.push('/app/dashboard')
+      if(isError) setErr(message);
+      if(isSuccess && user) router.push('/app/dashboard')
+      dispatch(reset())
+    }, [isError, isSuccess, dispatch, user, message, router]);
 
-  const handleSubmit = () => {
-    return;
-  };
+  if (isLoading) return <Spinner />
   return (
     <Formik
       initialValues={initialValues}
       validationSchema={LogInSchema}
-      onSubmit={handleSubmit}
+      onSubmit={async(values) => {
+        dispatch(login(values));
+      }}
     >
       {(formik) => {
         let {
@@ -53,8 +71,6 @@ const Login: NextPage = () => {
 
                 <div className="md:flex-1 flex-auto flex-wrap mt-6">
                   <Form
-                    onSubmit={handleSubmit}
-                    method="POST"
                     className="p-2 w-auto"
                   >
                     <div className="w-full mt-4">
@@ -109,7 +125,7 @@ const Login: NextPage = () => {
                     <>
                       <p className="text-right text-sm m-2 p-2">
                         Already have an account?{' '}
-                        <Link href="/signup">
+                        <Link href="/auth/signup">
                           <a className="underline text-blue-700">Sign up</a>
                         </Link>
                       </p>

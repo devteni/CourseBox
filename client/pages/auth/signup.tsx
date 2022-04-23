@@ -1,12 +1,18 @@
 import type { NextPage } from "next";
+import { useEffect, useState } from "react";
 import Link from 'next/link';
+import { useRouter } from "next/router";
 import * as yup from 'yup';
 import { Form, Field, Formik } from 'formik';
+import { useAppSelector, useAppDispatch } from "../../hooks";
+import { reset, signUp } from "../../slices/auth/auth";
 
 const SignUpSchema = yup.object().shape({
-  firstname: yup.string().required('Firstname is required'),
-  lastname: yup.string().required('Lastname is required'),
+  firstName: yup.string().required('Firstname is required'),
+  lastName: yup.string().required('Lastname is required'),
   email: yup.string().email().required('Email is required'),
+  school: yup.string().required('School is required'),
+  department: yup.string().required('Department is required'),
   password: yup
     .string()
     .required('Password is required')
@@ -15,35 +21,39 @@ const SignUpSchema = yup.object().shape({
 
 // declare initial values for state
 const initialValues = {
-  firstname: '',
-  lastname: '',
+  firstName: '',
+  lastName: '',
   email: '',
+  school: '',
+  department: '',
   password: '',
+  role: 'student'
 };
 
 const Signup: NextPage = () => {
-  // const [formValues, setFormValues] = useState(initialValues);
-
-  // custom handleChange function
-  /*const handleChange = (e) => {
-    const { name, value } = e.currentTarget;
-    console.log(e.currentTarget.value)
-    setFormValues({ ...formValues, [name]: value });
-  };*/
-
+  const [err, setErr] = useState('');
+  const router = useRouter();
   const validBtn =
     'text-white p-4 font-bold tracking-tighter bg-blue-700 w-full mt-6 outline-none appearance-none border-none focus:ring-4 focus:ring-gray-400';
   const disabledBtn =
     'text-white p-4 font-bold tracking-tighter bg-gray-500 w-full mt-6 outline-none appearance-none border-none focus:ring-4 focus:ring-gray-400';
-  const handleSubmit = (values: object) => {
-    return console.log(values);
-  };
+  
+  const dispatch = useAppDispatch();
 
+  const { user, isLoading, isError, isSuccess, message } = useAppSelector((state) => state.auth);
+
+  useEffect(() => {
+    if(isError) setErr(message);
+    if(isSuccess && user) router.push('/app/')
+    dispatch(reset())
+  }, [isError, isSuccess, dispatch, user, message, router]);
   return (
     <Formik
       initialValues={initialValues}
       validationSchema={SignUpSchema}
-      onSubmit={handleSubmit}
+      onSubmit={async(values) => {
+        dispatch(signUp(values));
+      }}
     >
       {(formik) => {
         let {
@@ -72,51 +82,57 @@ const Signup: NextPage = () => {
 
               <div className="md:flex-1 flex-auto flex-wrap mt-6">
                 <Form
-                  onSubmit={handleSubmit}
-                  method="POST"
                   className="p-2 w-auto"
                 >
+                  <>
+                      {
+                        err ? (
+                            <span className="p-3 text-black bg-gray-300 shadow-lg rounded-lg opacity-1 mx-14 lg:m-[230px]">
+                              {err}
+                            </span> ) : null
+                      }
+                    </>
                   <div className="grid gap-2 grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2 2xl:grid-cols-2">
                     <div className="w-full mt-4">
                       <label
-                        htmlFor="firstname"
+                        htmlFor="firstName"
                         className="px-5 pt-1.5 rounded-sm text-sm tracking-tighter"
                       >
                         Firstname
                       </label>
                       <Field
-                        id="firstname"
+                        id="firstName"
                         type="text"
-                        name="firstname"
+                        name="firstName"
                         onChange={handleChange}
                         onBlur={handleBlur}
-                        value={values.firstname}
+                        value={values.firstName}
                         className="py-3 px-5 w-full border-solid border-2 rounded-sm outline-none appearance-none focus:ring-1 focus:border-blue-700"
                         required
                       />
-                      {errors.firstname && touched.firstname ? (
-                        <div className="text-rose-900">{errors.firstname}</div>
+                      {errors.firstName && touched.firstName ? (
+                        <div className="text-rose-900">{errors.firstName}</div>
                       ) : null}
                     </div>
                     <div className="w-full mt-4">
                       <label
-                        htmlFor="lastname"
+                        htmlFor="lastName"
                         className="px-5 py-1.5 rounded-sm text-sm tracking-tighter"
                       >
                         Lastname
                       </label>
                       <Field
-                        id="lastname"
+                        id="lastName"
                         type="text"
-                        name="lastname"
+                        name="lastName"
                         onChange={handleChange}
                         onBlur={handleBlur}
-                        value={values.lastname}
+                        value={values.lastName}
                         className="py-3 px-5 w-full border-solid border-2 rounded-sm outline-none appearance-none focus:ring-1 focus:border-blue-700"
                         required
                       />
-                      {errors.lastname && touched.lastname ? (
-                        <div className="text-rose-900">{errors.lastname}</div>
+                      {errors.lastName && touched.lastName ? (
+                        <div className="text-rose-900">{errors.lastName}</div>
                       ) : null}
                     </div>
                   </div>
@@ -134,12 +150,56 @@ const Signup: NextPage = () => {
                       value={values.email}
                       onChange={handleChange}
                       onBlur={handleBlur}
-                      className="py-3 px-5 w-full border-solid border-2 rounded-sm rounded-sm outline-none appearance-none focus:ring-1 focus:border-blue-700"
+                      className="py-3 px-5 w-full border-solid border-2 rounded-sm outline-none appearance-none focus:ring-1 focus:border-blue-700"
                       required
                     />
                     {errors.email && touched.email ? (
                       <div className="text-rose-900">{errors.email}</div>
                     ) : null}
+                  </div>
+                  <div className="grid gap-2 grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2 2xl:grid-cols-2">
+                    <div className="w-full mt-4">
+                      <label
+                        htmlFor="school"
+                        className="px-5 pt-1.5 rounded-sm text-sm tracking-tighter"
+                      >
+                        School
+                      </label>
+                      <Field
+                        id="school"
+                        type="text"
+                        name="school"
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        value={values.school}
+                        className="py-3 px-5 w-full border-solid border-2 rounded-sm outline-none appearance-none focus:ring-1 focus:border-blue-700"
+                        required
+                      />
+                      {errors.school && touched.school ? (
+                        <div className="text-rose-900">{errors.school}</div>
+                      ) : null}
+                    </div>
+                    <div className="w-full mt-4">
+                      <label
+                        htmlFor="department"
+                        className="px-5 py-1.5 rounded-sm text-sm tracking-tighter"
+                      >
+                        Department
+                      </label>
+                      <Field
+                        id="department"
+                        type="text"
+                        name="department"
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        value={values.department}
+                        className="py-3 px-5 w-full border-solid border-2 rounded-sm outline-none appearance-none focus:ring-1 focus:border-blue-700"
+                        required
+                      />
+                      {errors.department && touched.department ? (
+                        <div className="text-rose-900">{errors.department}</div>
+                      ) : null}
+                    </div>
                   </div>
                   <div className="w-full mt-4">
                     <label
@@ -155,7 +215,7 @@ const Signup: NextPage = () => {
                       value={values.password}
                       onChange={handleChange}
                       onBlur={handleBlur}
-                      className="py-3 px-5 w-full border-solid border-2 rounded-sm rounded-sm outline-none appearance-none focus:ring-1 focus:border-blue-700"
+                      className="py-3 px-5 w-full border-solid border-2 rounded-sm outline-none appearance-none focus:ring-1 focus:border-blue-700"
                       required
                     />
                     {errors.password && touched.password ? (
@@ -178,7 +238,7 @@ const Signup: NextPage = () => {
                   <>
                     <p className="text-right text-sm m-2 p-2">
                       Don&apos;at have an account?{' '}
-                      <Link href="/login">
+                      <Link href="/auth/login">
                           <a className="underline text-blue-700">Log in</a>
                       </Link>
                     </p>
