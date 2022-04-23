@@ -1,4 +1,3 @@
-export enum Role {
-  Student = 'student',
-  Lecturer = 'lecturer',
-}
+import { Role } from '@prisma/client';
+
+export { Role };

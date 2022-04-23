@@ -9,6 +9,8 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { Roles } from '../users/decorator/roles.decorator';
+import { Role } from '../users/enums/role.enum';
 import { CoursesService } from './courses.service';
 import { CreateCourseDto } from './dto/create-course.dto';
 import { UpdateCourseDto } from './dto/update-course.dto';
@@ -17,7 +19,9 @@ import { UpdateCourseDto } from './dto/update-course.dto';
 export class CoursesController {
   constructor(private readonly coursesService: CoursesService) {}
 
-  @Post()
+  @UseGuards(JwtAuthGuard)
+  @Roles(Role.LECTURER)
+  @Post('/new')
   create(@Body() createCourseDto: CreateCourseDto) {
     return this.coursesService.create(createCourseDto);
   }

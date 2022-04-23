@@ -6,6 +6,7 @@ import { createLecturerDto } from './dto/create-lecturer.dto';
 import { v4 as uuidv4 } from 'uuid';
 import * as bcrypt from 'bcrypt';
 import { randomNumber } from 'src/utils/randomNumber';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class AdminService {
@@ -24,7 +25,7 @@ export class AdminService {
     return false;
   }
 
-  async createLecturer(payload: createLecturerDto) {
+  async createLecturer(payload: Prisma.UserCreateInput) {
     const uniqueNumber = randomNumber(12);
     const salt = 10;
     const password = payload.password;

@@ -20,7 +20,7 @@ model User {
   department String
   school String
   courses Course[]
-  role Role
+  role Role @default(STUDENT)
   access_token String?
   createdAt DateTime @default(now())
   modifiedAt DateTime @default(now())
