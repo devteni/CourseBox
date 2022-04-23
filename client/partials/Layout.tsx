@@ -2,6 +2,9 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { useAppDispatch, useAppSelector } from '../hooks';
 import { setAuthorized } from '../slices/auth/auth'
+import Sidebar from './Sidebar';
+import styles from '../styles/Home.module.css'
+
 
 
 function Layout({ children }: any) {
@@ -31,7 +34,7 @@ function Layout({ children }: any) {
 
     function authCheck(url: string) {
         // redirect to login page if accessing a private page and not logged in 
-        const publicPaths = ['/auth/login'];
+        const publicPaths = ['/', '/auth/login', '/auth/signup'];
         const path = url.split('?')[0];
         if (!user && !publicPaths.includes(path)) {
             dispatch(setAuthorized(false));
@@ -39,12 +42,21 @@ function Layout({ children }: any) {
                 pathname: '/auth/login',
                 query: { returnUrl: router.asPath }
             });
-        } else {
+        } else if (user) {
             dispatch(setAuthorized(true));
+        } else {
+            dispatch(setAuthorized(false))
         }
     }
 
-    return (isAuthenticated && children);
+    return (
+        <div className='flex flex-nowrap'>
+            <Sidebar />
+            <div className={styles.main_content}>
+                {children}
+            </div>
+        </div>
+    );
 }
 
 export default Layout;

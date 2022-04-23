@@ -1,33 +1,39 @@
 import Link from "next/link";
-import { CashIcon, LogoutIcon, UserIcon, XCircleIcon } from '@heroicons/react/solid'
-import { useAppDispatch } from "../hooks";
+import { HomeIcon, UserIcon, BookmarkAltIcon, AdjustmentsIcon, ClipboardListIcon } from '@heroicons/react/solid'
+import { useAppDispatch, useAppSelector } from "../hooks";
 import { logout } from "../slices/auth/auth";
 
-const data = [
+const sidebarData = [
     {
         "text": "Dashboard",
-        "link": "/dashboard"
+        "link": "/app/dashboard",
+        "icon": <HomeIcon width={30}/>
     },
     {
         "text": "Courses",
-        "link": "/dashboard"
+        "link": "/app/courses",
+        "icon": <BookmarkAltIcon width={30}/>
     },
     {
         "text": "My Profile",
-        "link": "/dashboard"
+        "link": "/app/profile",
+        "icon": <UserIcon width={30}/>
     },
     {
         "text": "Setting",
-        "link": "/dashboard"
+        "link": "/app/dashboard",
+        "icon": <AdjustmentsIcon width={30}/>
     },
     {
         "text": "Classroom",
-        "link": "/dashboard"
+        "link": "/app/dashboard",
+        "icon": <ClipboardListIcon width={30}/>
     },
 ]
 
 const Sidebar = () => {
     const dispatch = useAppDispatch();
+    const { user } = useAppSelector((state) => state.auth);
 
     const handleLogout = () => {
         dispatch(logout)
@@ -46,44 +52,30 @@ const Sidebar = () => {
             
         // </div>
         <>
-        <div className="flex items-end justify-end px-4">
+        <div className="flex items-end justify-start px-4">
           <div
-            className={` fixed top-0  z-20 h-screen w-10/12 bg-gray-200 shadow-2xl delay-150 duration-200 ease-out lg:w-72`}
+            className={`z-20 h-screen w-10/12 border-2 shadow-xl delay-150 duration-200 ease-out lg:w-72`}
           >
-            <XCircleIcon
-              width={40}
-              className="absolute top-0 right-0 cursor-pointer p-2"
-            //   onClick={''}
-            />
             <nav role="navigation" className="p-6">
               <div className="flex items-center gap-4 pb-4 font-medium text-gray-600">
-                <p>PLAN.COM</p>
+                <p className="text-xl py-4">Hi, {user.firstName}. Welcome back!</p>
               </div>
   
               <div className="relative -mx-4 mt-4 h-[85vh] overflow-y-auto overflow-x-hidden">
                 <ul className="mb-12 space-y-4 px-4">
-                  <li className="cursor-pointer">
-                    <Link href="/events/all">
-                      <span className="flex items-center gap-4 text-gray-600 transition hover:text-indigo-500">
-                        <UserIcon width={30} />
-                        <p>Events Types</p>
-                      </span>
-                    </Link>
-                  </li>
-                  <li className="cursor-pointer">
-                    <Link href="/">
-                      <span className="flex items-center gap-4 text-gray-600 transition hover:text-indigo-500">
-                        <CashIcon width={30} />
-                        <p>Bookings</p>
-                      </span>
-                    </Link>
-                  </li>
-                  <li className="cursor-pointer" onClick={() => handleLogout()}>
-                    <span className="flex items-center gap-4 text-gray-600 transition hover:text-indigo-500">
-                      <LogoutIcon width={30} />
-                      <p>Logout</p>
-                    </span>
-                  </li>
+                  {
+                    sidebarData?.map((nav, i) => {
+                     return <li key={i+89283} className="cursor-pointer">
+                        <Link href={nav.link}>
+                          <span className="flex items-center p-3 gap-4 text-gray-600 transition hover:text-indigo-500">
+                            {nav.icon}
+                            <p>{nav.text}</p>
+                          </span>
+                        </Link>
+                      </li>
+                    })
+                  }
+                  
                 </ul>
               </div>
             </nav>

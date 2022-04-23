@@ -5,6 +5,7 @@ import { Provider } from 'react-redux';
 import { store } from '../store';
 import Navbar from '../partials/Navbar';
 import Layout from '../partials/Layout';
+import Sidebar from '../partials/Sidebar';
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
