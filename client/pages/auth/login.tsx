@@ -34,7 +34,7 @@ const Login: NextPage = () => {
     'text-white p-4 font-bold tracking-tighter bg-gray-500 w-full mt-6 outline-none appearance-none border-none focus:ring-4 focus:ring-gray-400';
   
     useEffect(() => {
-      if(user) router.push('/app/dashboard')
+      if(Object.keys(user).length !== 0) router.push('/app/dashboard')
       if(isError) setErr(message);
       if(isSuccess && user) router.push('/app/dashboard')
       dispatch(reset())

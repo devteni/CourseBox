@@ -31,7 +31,6 @@ const Navbar: React.FC = () => {
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const { user, isAuthenticated} = useAppSelector((state) => state.auth);
-  // const isAuth = useAuth();
 
   const handleClick = (e: any) => {
     const navlinks = document.getElementsByClassName('nav-links')[0];

@@ -2,6 +2,8 @@ import Link from "next/link";
 import { HomeIcon, UserIcon, BookmarkAltIcon, AdjustmentsIcon, ClipboardListIcon } from '@heroicons/react/solid'
 import { useAppDispatch, useAppSelector } from "../hooks";
 import { logout } from "../slices/auth/auth";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/router";
 
 const sidebarData = [
     {
@@ -31,34 +33,46 @@ const sidebarData = [
     },
 ]
 
+type currentUser = {
+  id: number
+  firstName: string
+  lastName: string
+  email: string
+  uniqueNumber: string
+  password: string
+  department: string
+  school: string
+  role: string
+  access_token: string
+  createdAt: string
+  modifiedAt: string
+  schoolId: number
+  departmentId: number
+}
+
 const Sidebar = () => {
     const dispatch = useAppDispatch();
-    const { user } = useAppSelector((state) => state.auth);
+    const [currentUser, setCurrentUser] = useState({});
+    const { user, isAuthenticated} = useAppSelector((state) => state.auth);
+
+    useEffect(() => {
+      if (user) setCurrentUser(user)
+    }, [user])
 
     const handleLogout = () => {
         dispatch(logout)
     }
     return(
-        // <div>
-        //     <ul>
-        //         {
-        //             data.map((el, i) => {
-        //                 return (<li key={i}>
-        //                         <Link href={el.link}>{el.text}</Link>
-        //                     </li>)
-        //             })
-        //         }  
-        //     </ul>
-            
-        // </div>
         <>
-        <div className="flex items-end justify-start px-4">
+        {
+          isAuthenticated ? 
+          (<div className="flex justify-start px-4">
           <div
-            className={`z-20 h-screen w-10/12 border-2 shadow-xl delay-150 duration-200 ease-out lg:w-72`}
+            className={`z-20 w-10/12 border-2 shadow-xl delay-150 duration-200 ease-out lg:w-72`}
           >
             <nav role="navigation" className="p-6">
               <div className="flex items-center gap-4 pb-4 font-medium text-gray-600">
-                <p className="text-xl py-4">Hi, {user.firstName}. Welcome back!</p>
+                <p className="text-xl py-4">Hi, {currentUser.firstName}. Welcome back!</p>
               </div>
   
               <div className="relative -mx-4 mt-4 h-[85vh] overflow-y-auto overflow-x-hidden">
@@ -81,7 +95,8 @@ const Sidebar = () => {
             </nav>
           </div>
           
-        </div>
+        </div>) : null
+        }
       </>
     )
 };

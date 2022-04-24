@@ -44,7 +44,7 @@ const Signup: NextPage = () => {
 
   useEffect(() => {
     if(isError) setErr(message);
-    if(isSuccess && user) router.push('/app/')
+    if(isSuccess && Object.keys(user).length !== 0) router.push('/app/dashboard')
     dispatch(reset())
   }, [isError, isSuccess, dispatch, user, message, router]);
   return (

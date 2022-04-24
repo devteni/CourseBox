@@ -4,10 +4,12 @@ import {
     ThunkAction,
 } from '@reduxjs/toolkit';
 import authReducer from '../slices/auth/auth';
+import courseReducer from '../slices/course/course';
 
 export const store = configureStore({
     reducer: {
         auth: authReducer,
+        course: courseReducer
     },
 });
   

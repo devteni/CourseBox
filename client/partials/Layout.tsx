@@ -30,22 +30,22 @@ function Layout({ children }: any) {
         }
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [setAuthorized, authCheck, router]);
+    }, [setAuthorized, authCheck, router, user]);
 
     function authCheck(url: string) {
         // redirect to login page if accessing a private page and not logged in 
         const publicPaths = ['/', '/auth/login', '/auth/signup'];
         const path = url.split('?')[0];
-        if (!user && !publicPaths.includes(path)) {
+        if (Object.keys(user).length === 0 && !publicPaths.includes(path)) {
             dispatch(setAuthorized(false));
             router.push({
                 pathname: '/auth/login',
                 query: { returnUrl: router.asPath }
             });
-        } else if (user) {
-            dispatch(setAuthorized(true));
+        } else if (publicPaths.includes(path)) {
+            dispatch(setAuthorized(false));
         } else {
-            dispatch(setAuthorized(false))
+            dispatch(setAuthorized(true))
         }
     }
 
