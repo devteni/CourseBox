@@ -27,7 +27,7 @@ export class AuthService {
   async login(user: any) {
     const jwtPayload = { sub: user.id };
     const token = await this.generateAccessToken(jwtPayload);
-    await this.prisma.user.update({
+    const loggedInUser = await this.prisma.user.update({
       where: {
         id: user.id,
       },
@@ -35,7 +35,21 @@ export class AuthService {
         access_token: token,
       },
     });
-    return user;
+    const school = await this.prisma.school.findFirst({
+      where: {
+        id: loggedInUser.schoolId,
+      },
+    });
+    const dept = await this.prisma.department.findFirst({
+      where: {
+        id: loggedInUser.departmentId,
+      },
+    });
+    return {
+      ...loggedInUser,
+      school: school.schoolName,
+      department: dept.DepartmentName,
+    };
   }
 
   async generateAccessToken(payload: any) {

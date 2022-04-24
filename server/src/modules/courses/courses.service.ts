@@ -12,8 +12,12 @@ export class CoursesService {
     // })
   }
 
-  findAll() {
-    return `This action returns all courses`;
+  async findAll(userId: number) {
+    return await this.prisma.course.findMany({
+      where: {
+        userId: userId,
+      },
+    });
   }
 
   findOne(id: number) {

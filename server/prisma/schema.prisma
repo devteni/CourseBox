@@ -17,8 +17,8 @@ model User {
   email String
   uniqueNumber String
   password String
-  department String
-  school String
+  departmentId Int
+  schoolId Int
   courses Course[]
   role Role @default(STUDENT)
   access_token String?
@@ -29,7 +29,10 @@ model User {
 model Course {
   id Int @id @default(autoincrement())
   courseCode String
+  courseDesc String @db.LongText
   courseName String
+  departmentId Int
+  schoolId Int
   userId Int
   courseMaterial CourseMaterial[]
   lecturer User @relation(fields: [userId], references: [id])
@@ -52,6 +55,18 @@ model File {
   fileName String
   url String
   course CourseMaterial[]
+  createdAt DateTime @default(now())
+}
+
+model School {
+  id Int @id @default(autoincrement())
+  schoolName String
+  createdAt DateTime @default(now())
+}
+
+model Department {
+  id Int @id @default(autoincrement())
+  DepartmentName String
   createdAt DateTime @default(now())
 }
 

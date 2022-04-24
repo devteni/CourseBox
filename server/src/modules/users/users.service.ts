@@ -19,7 +19,7 @@ export class UsersService {
     private configService: ConfigService,
     private jwt: JwtService,
   ) {}
-  async create(createUserDto: Prisma.UserCreateInput) {
+  async create(createUserDto: CreateUserDto) {
     try {
       const existingUser = await this.prisma.user.findFirst({
         where: {
@@ -28,7 +28,17 @@ export class UsersService {
       });
       if (!existingUser) {
         const uniqueNumber = randomNumber(12);
-        const salt = 10;
+        const school = await this.prisma.school.findFirst({
+          where: {
+            schoolName: createUserDto.school,
+          },
+        });
+        const dept = await this.prisma.department.findFirst({
+          where: {
+            DepartmentName: createUserDto.department,
+          },
+        });
+        const salt = await bcrypt.genSalt(10);
         const password = createUserDto.password;
         const hashedPass = await bcrypt.hash(password, salt);
         const newUser = await this.prisma.user.create({
@@ -37,8 +47,8 @@ export class UsersService {
             lastName: createUserDto.lastName,
             password: hashedPass,
             email: createUserDto.email,
-            department: createUserDto.department.toLowerCase(),
-            school: createUserDto.school.toLowerCase(),
+            departmentId: dept.id,
+            schoolId: school.id,
             role: createUserDto.role,
             uniqueNumber: uniqueNumber,
           },

@@ -16,7 +16,12 @@ export class AdminController {
   }
 
   @Post('create-lecturer')
-  createLecturer(@Body() createDto) {
-    return this.adminService.createLecturer(createDto);
+  async createLecturer(@Body() createDto) {
+    return await this.adminService.createLecturer(createDto);
+  }
+
+  @Post('create-course')
+  async createCourse(@Body() createCourseDto) {
+    return await this.adminService.createCourse(createCourseDto);
   }
 }

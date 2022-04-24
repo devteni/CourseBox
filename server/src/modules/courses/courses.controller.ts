@@ -7,6 +7,8 @@ import {
   Param,
   Delete,
   UseGuards,
+  Request,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { Roles } from '../users/decorator/roles.decorator';
@@ -27,15 +29,15 @@ export class CoursesController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Get()
-  findAll() {
-    return this.coursesService.findAll();
+  @Get(':userId')
+  async findAll(@Param('userId', ParseIntPipe) userId: number) {
+    return await this.coursesService.findAll(userId);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.coursesService.findOne(+id);
-  }
+  // @Get(':userId/:id')
+  // findOne(@Param('id') id: string) {
+  //   return this.coursesService.findOne(+id);
+  // }
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateCourseDto: UpdateCourseDto) {
