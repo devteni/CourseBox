@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { useRouter } from 'next/router'
-import { ChangeEventHandler, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { API_URL } from '../../../constants';
 import { useAppSelector } from '../../../hooks';
 
@@ -8,27 +8,30 @@ const Course = () => {
   const router = useRouter();
   const { name } = router.query;
   const { user } = useAppSelector((state) => state.auth);
+  const { courses } = useAppSelector((state) => state.course);
   const [currentUser, setCurrentUser] = useState({})
   const [showModal, setShowModal] = useState(false);
   const [courseMaterial, setCourseMaterial] = useState({title: "", description: "", file: new Blob() });
 
     const closeModal = () => {
         setShowModal(false);
-        setCourseMaterial({title: "", description: ""})
+        setCourseMaterial({title: "", description: "", file: new Blob()})
     }
-
+    
     const addMaterial = async () => {
-        console.log(courseMaterial);
+        const validCourse: object = courses.find(({courseName}) => courseName === name);
         const data = new FormData();
         data.append('title', courseMaterial.title);
         data.append('courseMaterial', courseMaterial.file);
         data.append('description', courseMaterial.description);
+        data.append('courseId', validCourse.id);
         const res = await axios.post(`${API_URL}/courses/upload`, data, { 
             headers: {
                 "Authorization": `Bearer ${currentUser.access_token}`
                 }
             });
-        console.log(res.headers)
+        setCourseMaterial({title: "", description: "", file: new Blob() })
+        setShowModal(false);
     }
 
     useEffect(() => {
