@@ -26,10 +26,23 @@ type lecturer = {
     modifiedAt: string
 }
 
-export const fetchLecturerCourses = createAsyncThunk('/courses', 
+export const fetchLecturerCourses = createAsyncThunk('/courses/lecturer', 
     async (user, thunkAPI) => {
         try {
-            return await courseService.fetchCourses(user.id, user.access_token);;
+            return await courseService.fetchLecturerCourses(user.id, user.access_token);;
+        } catch(error: any) {
+            const message = (error.response && 
+                error.response.data && 
+                error.response.data.message) || error.message || error.toString()
+            return thunkAPI.rejectWithValue(message);
+        }
+    }
+);
+
+export const fetchCourses = createAsyncThunk('/courses/student', 
+    async (user, thunkAPI) => {
+        try {
+            return await courseService.fetchCourses(user.departmentId, user.access_token);;
         } catch(error: any) {
             const message = (error.response && 
                 error.response.data && 
@@ -59,6 +72,20 @@ export const courseSlice = createSlice({
                 state.courses = action.payload;
             })
             .addCase(fetchLecturerCourses.rejected, (state, action) => {
+                state.isLoading = false;
+                state.isError = true;
+                state.courses = [];
+                state.message = JSON.stringify(action.payload);
+            })
+            .addCase(fetchCourses.pending, (state) => {
+                state.isLoading = true;
+            })
+            .addCase(fetchCourses.fulfilled, (state, action: { payload: any }) => {
+                state.isLoading = false;
+                state.isSuccess = true;
+                state.courses = action.payload;
+            })
+            .addCase(fetchCourses.rejected, (state, action) => {
                 state.isLoading = false;
                 state.isError = true;
                 state.courses = [];

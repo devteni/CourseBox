@@ -80,14 +80,14 @@ const Sidebar = () => {
                   {
                     sidebarData?.map((nav, i) => {
                      return <li key={i+89283} className="cursor-pointer">
-                        <Link href={nav.link}>
-                          <span className="flex items-center p-3 gap-4 text-gray-600 transition hover:text-indigo-500">
-                            {nav.icon}
-                            <p>{nav.text}</p>
-                          </span>
-                        </Link>
-                      </li>
-                    })
+                            <Link href={nav.link}>
+                              <span className="flex items-center p-3 gap-4 text-gray-600 transition hover:text-indigo-500">
+                                {nav.icon}
+                                <p>{nav.text}</p>
+                              </span>
+                            </Link>
+                          </li>
+                          })
                   }
                   
                 </ul>

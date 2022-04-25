@@ -27,7 +27,6 @@ const initialValues = {
   school: '',
   department: '',
   password: '',
-  role: 'student'
 };
 
 const Signup: NextPage = () => {

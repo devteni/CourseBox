@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { LogoutIcon } from '@heroicons/react/solid';
 import Link from 'next/link';
-import { useAppSelector, useAuth } from '../hooks';
-import { useRouter } from 'next/router';
+import { useAppDispatch, useAppSelector, useAuth } from '../hooks';
+import { logout } from '../slices/auth/auth';
 
 const Links = [
   {
@@ -28,8 +28,9 @@ const authLinks = [
 ];
 
 const Navbar: React.FC = () => {
-  const router = useRouter();
+  const dispatch = useAppDispatch();
   const [isOpen, setIsOpen] = useState(false);
+  const [isDrop, setIsDrop] = useState(false);
   const { user, isAuthenticated} = useAppSelector((state) => state.auth);
 
   const handleClick = (e: any) => {
@@ -37,6 +38,13 @@ const Navbar: React.FC = () => {
     navlinks.classList.toggle('hidden');
     setIsOpen(!isOpen);
   };
+
+  const drop = () => {
+    const el = document.getElementById('dropdown');
+    el?.classList.toggle('hidden');
+    setIsDrop(!isDrop);
+  }
+  
   return (
     <>
       {
@@ -54,12 +62,14 @@ const Navbar: React.FC = () => {
             <nav className="md:ml-auto md:mr-auto flex flex-wrap items-center text-base justify-center">
               <p>Welcome to CourseBox 🍾</p>
             </nav>
-            <button className="items-center bg-gray-100 border-0 py-1 px-3 focus:outline-none hover:bg-gray-200 rounded text-base mt-4 md:mt-0">
-              Your Profile
+            <button onClick={drop} className="items-center bg-gray-100 border-0 py-1 px-3 focus:outline-none hover:bg-gray-200 rounded text-base mt-4 md:mt-0">
               <svg xmlns="http://www.w3.org/2000/svg" className="stroke-2 h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
                 <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-6-3a2 2 0 11-4 0 2 2 0 014 0zm-2 4a5 5 0 00-4.546 2.916A5.986 5.986 0 0010 16a5.986 5.986 0 004.546-2.084A5 5 0 0010 11z" clipRule="evenodd" />
               </svg>
             </button>
+            <div id="dropdown" className='hidden absolute top-20 right-0 z-10 items-center bg-gray-300 rounded py-1 px-3 mx-2' style={{ minWidth: "10rem" }}>
+              <button onClick={() => dispatch(logout())} className="flex items-center gap-2 py-1 px-1"><LogoutIcon width={30}/>Logout</button>
+            </div>
           </div>
         </header>  
         </>) :
