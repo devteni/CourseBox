@@ -46,8 +46,11 @@ export class CoursesController {
   @Roles(Role.LECTURER)
   @UseInterceptors(FileInterceptor('courseMaterial'))
   @Post('upload')
-  uploadFile(@Body() body, @UploadedFile() file) {
-    console.log(body, file);
+  async uploadFile(@Request() req) {
+    const body = await req.body;
+    body.file = req.file;
+    console.log(body);
+    // perform the magic here
   }
 
   @Delete(':id')
