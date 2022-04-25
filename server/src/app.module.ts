@@ -17,7 +17,7 @@ import { MulterModule } from '@nestjs/platform-express';
       isGlobal: true,
     }),
     MulterModule.register({
-      dest: './upload',
+      dest: process.env.UPLOAD_DEST,
     }),
     AdminModule,
     CoursesModule,

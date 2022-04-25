@@ -13,12 +13,13 @@ import {
   UploadedFile,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import { multerOptions } from 'src/config/multer.config';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { Roles } from '../users/decorator/roles.decorator';
 import { Role } from '../users/enums/role.enum';
 import { CoursesService } from './courses.service';
 import { CreateCourseDto } from './dto/create-course.dto';
-import { UpdateCourseDto } from './dto/update-course.dto';
 
 @Controller('courses')
 @UseGuards(JwtAuthGuard)
@@ -44,17 +45,14 @@ export class CoursesController {
   }
 
   @Roles(Role.LECTURER)
-  @UseInterceptors(FileInterceptor('courseMaterial'))
+  @UseInterceptors(FileInterceptor('courseMaterial', multerOptions))
   @Post('upload')
   async uploadFile(@Request() req) {
     const body = await req.body;
     body.file = req.file;
+    body.courseId = parseInt(body.courseId);
     console.log(body);
     // perform the magic here
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.coursesService.remove(+id);
+    await this.coursesService.uploadCourseMaterial(body);
   }
 }
