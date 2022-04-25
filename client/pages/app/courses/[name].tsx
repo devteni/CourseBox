@@ -21,7 +21,7 @@ const Course = () => {
         console.log(courseMaterial);
         const data = new FormData();
         data.append('title', courseMaterial.title);
-        data.append('file', courseMaterial.file);
+        data.append('courseMaterial', courseMaterial.file);
         data.append('description', courseMaterial.description);
         const res = await axios.post(`${API_URL}/courses/upload`, data, { 
             headers: {
