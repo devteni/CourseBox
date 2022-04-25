@@ -30,12 +30,12 @@ export class UsersService {
         const uniqueNumber = randomNumber(12);
         const school = await this.prisma.school.findFirst({
           where: {
-            schoolName: createUserDto.school,
+            schoolName: createUserDto.school.toLowerCase(),
           },
         });
         const dept = await this.prisma.department.findFirst({
           where: {
-            DepartmentName: createUserDto.department,
+            DepartmentName: createUserDto.department.toLowerCase(),
           },
         });
         const salt = await bcrypt.genSalt(10);
@@ -49,7 +49,7 @@ export class UsersService {
             email: createUserDto.email,
             departmentId: dept.id,
             schoolId: school.id,
-            role: createUserDto.role,
+            role: createUserDto.role ? createUserDto.role : 'STUDENT',
             uniqueNumber: uniqueNumber,
           },
         });
@@ -62,6 +62,7 @@ export class UsersService {
         throw new HttpException('User already exists', HttpStatus.FORBIDDEN);
       }
     } catch (error) {
+      console.log(error);
       throw new BadRequestException();
     }
   }

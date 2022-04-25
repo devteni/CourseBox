@@ -12,10 +12,17 @@ export class CoursesService {
     // })
   }
 
-  async findAll(userId: number) {
+  async findLecturerCourses(userId: number) {
     return await this.prisma.course.findMany({
       where: {
         userId: userId,
+      },
+    });
+  }
+  async findStudentCourses(deptId: number) {
+    return await this.prisma.course.findMany({
+      where: {
+        departmentId: deptId,
       },
     });
   }

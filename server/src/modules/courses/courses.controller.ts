@@ -9,7 +9,10 @@ import {
   UseGuards,
   Request,
   ParseIntPipe,
+  UseInterceptors,
+  UploadedFile,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { Roles } from '../users/decorator/roles.decorator';
 import { Role } from '../users/enums/role.enum';
@@ -18,30 +21,33 @@ import { CreateCourseDto } from './dto/create-course.dto';
 import { UpdateCourseDto } from './dto/update-course.dto';
 
 @Controller('courses')
+@UseGuards(JwtAuthGuard)
 export class CoursesController {
   constructor(private readonly coursesService: CoursesService) {}
 
-  @UseGuards(JwtAuthGuard)
   @Roles(Role.LECTURER)
   @Post('/new')
   create(@Body() createCourseDto: CreateCourseDto) {
     return this.coursesService.create(createCourseDto);
   }
 
-  @UseGuards(JwtAuthGuard)
-  @Get(':userId')
-  async findAll(@Param('userId', ParseIntPipe) userId: number) {
-    return await this.coursesService.findAll(userId);
+  @Roles(Role.LECTURER)
+  @Get('lecturer/:userId')
+  async findLecturerCourses(@Param('userId', ParseIntPipe) userId: number) {
+    return await this.coursesService.findLecturerCourses(userId);
   }
 
-  // @Get(':userId/:id')
-  // findOne(@Param('id') id: string) {
-  //   return this.coursesService.findOne(+id);
-  // }
+  @Roles(Role.STUDENT)
+  @Get('student/:deptId')
+  async findStudentCourses(@Param('deptId', ParseIntPipe) deptId: number) {
+    return await this.coursesService.findStudentCourses(deptId);
+  }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateCourseDto: UpdateCourseDto) {
-    return this.coursesService.update(+id, updateCourseDto);
+  @Roles(Role.LECTURER)
+  @UseInterceptors(FileInterceptor('courseMaterial'))
+  @Post('upload')
+  uploadFile(@Body() body, @UploadedFile() file) {
+    console.log(body, file);
   }
 
   @Delete(':id')

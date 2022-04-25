@@ -8,12 +8,16 @@ import { FilesModule } from './modules/files/files.module';
 import { UsersModule } from './modules/users/users.module';
 import { AdminModule } from './modules/admin/admin.module';
 import config from './config';
+import { MulterModule } from '@nestjs/platform-express';
 @Module({
   imports: [
     AuthModule,
     ConfigModule.forRoot({
       load: [config],
       isGlobal: true,
+    }),
+    MulterModule.register({
+      dest: './upload',
     }),
     AdminModule,
     CoursesModule,
