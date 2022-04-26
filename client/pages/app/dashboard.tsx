@@ -1,10 +1,12 @@
 import type { NextPage } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../hooks";
 import Sidebar from "../../partials/Sidebar";
 import { setUser } from "../../slices/auth/auth";
+import hero from "../../public/assets/learning.jpg"
 
 
 const Dashboard: NextPage = () => {
@@ -25,7 +27,7 @@ const Dashboard: NextPage = () => {
                         </div>
                     </div>
                     <div className="lg:max-w-lg lg:w-full md:w-1/2 w-5/6">
-                    <img alt="incoming" className="object-cover object-center rounded" alt="hero" src="https://dummyimage.com/720x600" />
+                    <Image layout="responsive" width={200} height={200} className="object-cover object-center rounded" alt="hero" src={hero} />
                     </div>
                 </div>
             </section>
