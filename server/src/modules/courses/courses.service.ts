@@ -38,11 +38,35 @@ export class CoursesService {
     const file = await this.prisma.file.create({
       data: {
         fileName: payload.file.originalname,
-        url: 'jfnlkjds',
-        courseMaterialId: courseMaterial.id,
+        url: payload.file.path,
       },
     });
-    courseMaterial.fileId = file.id;
+    const updatedCourseMaterial = await this.prisma.courseMaterial.update({
+      where: {
+        id: courseMaterial.id,
+      },
+      data: {
+        file: { connect: { id: file.id } },
+      },
+    });
+    await this.prisma.file.update({
+      where: {
+        id: file.id,
+      },
+      data: {
+        courseMaterialId: updatedCourseMaterial.id,
+      },
+    });
+    // console.log('na here', courseMaterial.fileId);
     return courseMaterial;
+  }
+
+  async fetchCourseMaterials(payload) {
+    const courseMaterials = await this.prisma.courseMaterial.findMany({
+      where: {
+        courseId: payload.courseId,
+      },
+    });
+    return courseMaterials;
   }
 }

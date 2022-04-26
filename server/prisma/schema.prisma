@@ -54,8 +54,8 @@ model File {
   id Int @id @default(autoincrement())
   fileName String
   url String
-  courseMaterialId Int
-  course CourseMaterial[]
+  courseMaterialId Int?
+  courseMaterial CourseMaterial?
   createdAt DateTime @default(now())
 }
 

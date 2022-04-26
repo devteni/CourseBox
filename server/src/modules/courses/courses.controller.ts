@@ -53,6 +53,11 @@ export class CoursesController {
     body.courseId = parseInt(body.courseId);
     console.log(body);
     // perform the magic here
-    await this.coursesService.uploadCourseMaterial(body);
+    return await this.coursesService.uploadCourseMaterial(body);
+  }
+
+  @Get('/:id')
+  async fetchCourseMaterials(@Param('id', ParseIntPipe) id: number) {
+    return await this.coursesService.fetchCourseMaterials(id);
   }
 }
