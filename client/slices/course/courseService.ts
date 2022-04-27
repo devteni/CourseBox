@@ -14,6 +14,12 @@ const fetchCourses = async (deptId: any, access_token: any) => {
     return response.data;
 }
 
+const fetchCourseMaterials = async (courseId: any, access_token: any) => {
+    const response = await axios.get(`${API_URL}/courses/${courseId}`, { headers: { "Authorization": `Bearer ${access_token}`}});
+    console.log(response)
+    return response.data;
+}
 
-const courseService = { fetchCourses, fetchLecturerCourses };
+
+const courseService = { fetchCourses, fetchLecturerCourses, fetchCourseMaterials };
 export default courseService; 

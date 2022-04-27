@@ -4,6 +4,7 @@ import courseService from './courseService';
 
 const initialState = {
     courses: [],
+    courseMaterials: [],
     isError: false,
     isSuccess: false,
     isLoading: false,
@@ -42,7 +43,7 @@ export const fetchLecturerCourses = createAsyncThunk('/courses/lecturer',
 export const fetchCourses = createAsyncThunk('/courses/student', 
     async (user, thunkAPI) => {
         try {
-            return await courseService.fetchCourses(user.departmentId, user.access_token);;
+            return await courseService.fetchCourses(user.departmentId, user.access_token);
         } catch(error: any) {
             const message = (error.response && 
                 error.response.data && 
@@ -52,6 +53,19 @@ export const fetchCourses = createAsyncThunk('/courses/student',
     }
 );
 
+export const fetchCourseMaterials = createAsyncThunk('/courses/materials', 
+   async (payload, thunkAPI) => {
+       try {
+           return await courseService.fetchCourseMaterials(payload.courseId, payload.access_token);
+       } catch(error: any) {
+        const message = (error.response && 
+            error.response.data && 
+            error.response.data.message) || error.message || error.toString()
+        return thunkAPI.rejectWithValue(message);
+       }
+   }
+);
+
 export const courseSlice = createSlice({
     name: 'course',
     initialState,
@@ -59,6 +73,9 @@ export const courseSlice = createSlice({
         setCourses: (state, action) => {
             state.courses = action.payload;
             state.isSuccess = true;
+        },
+        setCourseMaterials: (state, action) => {
+            state.courseMaterials = action.payload;
         }
     },
     extraReducers: (builder) => {
@@ -89,6 +106,20 @@ export const courseSlice = createSlice({
                 state.isLoading = false;
                 state.isError = true;
                 state.courses = [];
+                state.message = JSON.stringify(action.payload);
+            })
+            .addCase(fetchCourseMaterials.pending, (state) => {
+                state.isLoading = true;
+            })
+            .addCase(fetchCourseMaterials.fulfilled, (state, action: { payload: any }) => {
+                state.isLoading = false;
+                state.isSuccess = true;
+                state.courseMaterials = action.payload;
+            })
+            .addCase(fetchCourseMaterials.rejected, (state, action) => {
+                state.isLoading = false;
+                state.isError = true;
+                state.courseMaterials = [];
                 state.message = JSON.stringify(action.payload);
             })
     }

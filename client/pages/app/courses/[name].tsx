@@ -3,25 +3,47 @@ import Image from 'next/image';
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react';
 import { API_URL } from '../../../constants';
-import { useAppSelector } from '../../../hooks';
+import { useAppDispatch, useAppSelector } from '../../../hooks';
 import pic from "../../../public/assets/mis.jpg"
+import { fetchCourseMaterials } from '../../../slices/course/course';
+
+type material = {
+    title: string,
+    description: string,
+    file: {}
+}
+
+type course = {
+    id: number,
+    courseCode: string,
+    courseName: string,
+    userId: string,
+    departmentId: string,
+    schoolId: string,
+    courseDesc: string,
+    createdAt: string,
+    modifiedAt: string,
+}
 
 const Course = () => {
   const router = useRouter();
+  const dispatch = useAppDispatch();
   const { name } = router.query;
   const { user } = useAppSelector((state) => state.auth);
-  const { courses } = useAppSelector((state) => state.course);
+  const { courses, courseMaterials } = useAppSelector((state) => state.course);
   const [currentUser, setCurrentUser] = useState({})
   const [showModal, setShowModal] = useState(false);
-  const [courseMaterial, setCourseMaterial] = useState({title: "", description: "", file: new Blob() });
-
+  const [courseMaterial, setCourseMaterial] = useState({title: "", description: "", file: {} });
+  const validCourse = courses.find(({courseName}) => courseName === name);
+  const fileUrl = 'ftp://'
+  const payload = { ...user };
+  payload.courseId = validCourse.id;
     const closeModal = () => {
         setShowModal(false);
         setCourseMaterial({title: "", description: "", file: new Blob()})
     }
     
     const addMaterial = async () => {
-        const validCourse: object = courses.find(({courseName}) => courseName === name);
         const data = new FormData();
         data.append('title', courseMaterial.title);
         data.append('courseMaterial', courseMaterial.file);
@@ -34,10 +56,14 @@ const Course = () => {
             });
         setCourseMaterial({title: "", description: "", file: new Blob() })
         setShowModal(false);
+        dispatch(fetchCourseMaterials(payload))
     }
 
     useEffect(() => {
-        if (user) setCurrentUser(user);
+        if (user) { 
+            setCurrentUser(user);
+            dispatch(fetchCourseMaterials(payload))
+        }
     }, [user])
     
   return (
@@ -46,15 +72,15 @@ const Course = () => {
         <div className="lg:max-w-lg lg:w-full md:w-1/2 w-5/6 mb-10 md:mb-0">
             <Image layout='responsive' width={200} height={200} className="object-cover object-center rounded" alt="hero" src={pic} />
         </div>
-        <div className="lg:flex-grow md:w-1/2 lg:pl-24 md:pl-16 flex flex-col md:items-start md:text-left items-center text-center">
-            <h1 className="title-font sm:text-4xl text-3xl mb-4 font-medium text-gray-900 uppercase">{name}
-            <br className="hidden lg:inline-block" /><small>{}</small>
-            </h1>
-            <p className="mb-8 leading-relaxed">Copper mug try-hard pitchfork pour-over freegan heirloom neutra air plant cold-pressed tacos poke beard tote bag. Heirloom echo park mlkshk tote bag selvage hot chicken authentic tumeric truffaut hexagon try-hard chambray.</p>
-            <div className="flex justify-center">
-            { currentUser.role === "LECTURER" ? <button className="inline-flex text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg" onClick={() => setShowModal(true)}>New Material</button>: '' }
+            <div className="lg:flex-grow md:w-1/2 lg:pl-24 md:pl-16 flex flex-col md:items-start md:text-left items-center text-center">
+                <h1 className="title-font sm:text-4xl text-3xl mb-4 font-medium text-gray-900 uppercase">{name}
+                <br className="hidden lg:inline-block" /><small>{}</small>
+                </h1>
+                <p className="mb-8 leading-relaxed">Copper mug try-hard pitchfork pour-over freegan heirloom neutra air plant cold-pressed tacos poke beard tote bag. Heirloom echo park mlkshk tote bag selvage hot chicken authentic tumeric truffaut hexagon try-hard chambray.</p>
+                <div className="flex justify-center">
+                { currentUser.role === "LECTURER" ? <button className="inline-flex text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg" onClick={() => setShowModal(true)}>New Material</button>: '' }
+                </div>
             </div>
-        </div>
         </div>
 
         {/* Add new material modal */}
@@ -124,8 +150,6 @@ const Course = () => {
                                     placeholder="Upload course material" 
                                     onChange={(e) => { 
                                         const file = e.currentTarget.files[0];
-                                        let data = new FormData();
-                                        data.append("file", file.name)
                                         setCourseMaterial({ ...courseMaterial, file: file })
                                     }}
                                     required/>
@@ -158,10 +182,25 @@ const Course = () => {
         ) : null}
         </>
 
-        <section>
-            <div className='w-1/3 border-2 border-gray-300'>
-
-            </div>
+        <section className='flex flex-row justify-between'>
+            {
+                courseMaterials?.map((el: material, i) => {
+                    if (el.file) {
+                        return (
+                        <div key={i} className='relative w-1/3 h-2/3 border-2 mx-2 border-gray-300 p-4'>
+                            <p className='uppercase text-base font-bold'>{el.title}</p>
+                            <p className='px-3'>{el.description}</p>
+                            <span className='my-4'>
+                            <a className='absolute p-2 bg-blue-500 rounded text-white' 
+                            href={el.file ? `${el.file.url}}` : ''} download={el.file.fileName}>Download file</a>
+                            </span>
+                        </div>
+                        )
+                    }
+                    
+                })
+            }
+            
         </section>
     </section>
   )
