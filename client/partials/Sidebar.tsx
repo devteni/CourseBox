@@ -57,7 +57,7 @@ const Sidebar = () => {
 
     useEffect(() => {
       if (user) setCurrentUser(user)
-    }, [user])
+    }, [])
 
     const handleLogout = () => {
         dispatch(logout)
@@ -66,9 +66,9 @@ const Sidebar = () => {
         <>
         {
           isAuthenticated ? 
-          (<div className="flex justify-start px-4">
+          (<div className="flex justify-start">
           <div
-            className={`z-20 w-10/12 border-2 shadow-xl delay-150 duration-200 ease-out lg:w-72`}
+            className={`fixed h-screen bg-[#f6f7f9] z-20 w-10/12 border-2 shadow-xl delay-150 duration-200 ease-out lg:w-1/5`}
           >
             <nav role="navigation" className="p-6">
               <div className="flex items-center gap-4 pb-4 font-medium text-gray-600">

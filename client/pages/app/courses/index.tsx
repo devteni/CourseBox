@@ -15,12 +15,12 @@ const Index: NextPage = () => {
     useEffect(() => {
         if (isAuthenticated && user.role === "LECTURER") {
             dispatch(fetchLecturerCourses(user))
-            dispatch(setCourses)
+            dispatch(setCourses(courses))
         } else if (isAuthenticated && user.role === "STUDENT") {
             dispatch(fetchCourses(user))
-            dispatch(setCourses)
+            dispatch(setCourses(courses))
         }
-    }, [dispatch, isAuthenticated, user])
+    }, [])
 
     return(
         <div>

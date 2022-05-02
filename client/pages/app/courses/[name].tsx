@@ -1,16 +1,20 @@
 import axios from 'axios';
+import fileDownload from 'js-file-download';
 import Image from 'next/image';
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react';
 import { API_URL } from '../../../constants';
 import { useAppDispatch, useAppSelector } from '../../../hooks';
 import pic from "../../../public/assets/mis.jpg"
-import { fetchCourseMaterials } from '../../../slices/course/course';
+import { fetchCourseMaterials, fetchLecturerCourses} from '../../../slices/course/course';
 
-type material = {
+interface material {
     title: string,
     description: string,
-    file: {}
+    file: {
+        url: string,
+        fileName: string,
+    }
 }
 
 type course = {
@@ -25,17 +29,29 @@ type course = {
     modifiedAt: string,
 }
 
+type currentUser = { 
+    access_token: string;
+    role: string;
+}
+
+interface courseMaterial { 
+    title: string;
+    description: string;
+    file: {}
+}
+
 const Course = () => {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const { name } = router.query;
   const { user } = useAppSelector((state) => state.auth);
   const { courses, courseMaterials } = useAppSelector((state) => state.course);
-  const [currentUser, setCurrentUser] = useState({})
+  const [currentUser, setCurrentUser] = useState<currentUser>({})
   const [showModal, setShowModal] = useState(false);
-  const [courseMaterial, setCourseMaterial] = useState({title: "", description: "", file: {} });
-  const validCourse = courses.find(({courseName}) => courseName === name);
-  const fileUrl = 'ftp://'
+  const [validCourse, setValidCourse] = useState({});
+  const [courseMaterial, setCourseMaterial] = useState<courseMaterial>({ title: "", description: "", file: {} });
+  const fileUrl = 'ftp://';
+  const vCourse = courses.find(({courseName}) =>  courseName === name)!; 
   const payload = { ...user };
   payload.courseId = validCourse.id;
     const closeModal = () => {
@@ -48,7 +64,7 @@ const Course = () => {
         data.append('title', courseMaterial.title);
         data.append('courseMaterial', courseMaterial.file);
         data.append('description', courseMaterial.description);
-        data.append('courseId', validCourse.id);
+        data.append('courseId', vCourse.id);
         const res = await axios.post(`${API_URL}/courses/upload`, data, { 
             headers: {
                 "Authorization": `Bearer ${currentUser.access_token}`
@@ -56,13 +72,19 @@ const Course = () => {
             });
         setCourseMaterial({title: "", description: "", file: new Blob() })
         setShowModal(false);
+        console.log(payload)
         dispatch(fetchCourseMaterials(payload))
-    }
-
+        }
+    
     useEffect(() => {
-        if (user) { 
-            setCurrentUser(user);
-            dispatch(fetchCourseMaterials(payload))
+        if (user) setCurrentUser(user)
+        if (courses.length > 0) {
+            const validCourse = courses.find(({courseName}) =>  courseName === name)!;
+            setValidCourse(validCourse);
+            payload.courseId = validCourse.id;
+            dispatch(fetchCourseMaterials(payload));
+        } else {
+            dispatch(fetchLecturerCourses(user));
         }
     }, [user])
     
@@ -169,7 +191,7 @@ const Course = () => {
                     <button
                         className="bg-indigo-500 text-white active:bg-emerald-600 font-bold uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
                         type="button"
-                        onClick={addMaterial}
+                        onClick={() => addMaterial()}
                     >
                         Add
                     </button>
@@ -191,8 +213,10 @@ const Course = () => {
                             <p className='uppercase text-base font-bold'>{el.title}</p>
                             <p className='px-3'>{el.description}</p>
                             <span className='my-4'>
-                            <a className='absolute p-2 bg-blue-500 rounded text-white' 
-                            href={el.file ? `${el.file.url}}` : ''} download={el.file.fileName}>Download file</a>
+                            <a className='p-2 bg-blue-500 rounded text-white' 
+                                href={el.file.url} target="_blank" download={el.file.fileName} rel="noreferrer">
+                                Download File
+                            </a>
                             </span>
                         </div>
                         )

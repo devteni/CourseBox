@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { useAppDispatch, useAppSelector } from '../hooks';
-import { setAuthorized } from '../slices/auth/auth'
+import { setAuthorized, setUser } from '../slices/auth/auth'
 import Sidebar from './Sidebar';
 import styles from '../styles/Home.module.css'
+import Cookies from 'js-cookie';
 
 
 
@@ -14,7 +15,25 @@ function Layout({ children }: any) {
 
     useEffect(() => {
         // on initial load - run auth check 
-        authCheck(router.asPath);
+        function authCheck(url: string=router.asPath) {
+            // redirect to login page if accessing a private page and not logged in 
+            const publicPaths = ['/', '/auth/login', '/auth/signup'];
+            const path = url.split('?')[0];
+            const auth = Cookies.get('user')!;
+            if (!auth && !publicPaths.includes(path)) {
+                dispatch(setAuthorized(false));
+                router.push({
+                    pathname: '/auth/login',
+                    query: { returnUrl: router.asPath }
+                });
+            } else if (publicPaths.includes(path)) {
+                dispatch(setAuthorized(false));
+            } else {
+                dispatch(setUser(JSON.parse(auth)));
+                dispatch(setAuthorized(true))
+            }
+        }
+        authCheck();
 
         // on route change start - hide page content by setting authorized to false  
         const hideContent = () => setAuthorized(false);
@@ -30,29 +49,12 @@ function Layout({ children }: any) {
         }
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [setAuthorized, authCheck, router, user]);
-
-    function authCheck(url: string) {
-        // redirect to login page if accessing a private page and not logged in 
-        const publicPaths = ['/', '/auth/login', '/auth/signup'];
-        const path = url.split('?')[0];
-        if (Object.keys(user).length === 0 && !publicPaths.includes(path)) {
-            dispatch(setAuthorized(false));
-            router.push({
-                pathname: '/auth/login',
-                query: { returnUrl: router.asPath }
-            });
-        } else if (publicPaths.includes(path)) {
-            dispatch(setAuthorized(false));
-        } else {
-            dispatch(setAuthorized(true))
-        }
-    }
+    }, []);
 
     return (
-        <div className='flex flex-nowrap'>
+        <div className=''>
             <Sidebar />
-            <div className={styles.main_content}>
+            <div className='absolute right-0 bg-[#f6f7f9] lg:w-4/5 h-[100vh] py-2'>
                 {children}
             </div>
         </div>

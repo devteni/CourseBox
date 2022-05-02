@@ -44,6 +44,7 @@ export const login = createAsyncThunk(
 export const logout = createAsyncThunk(
     'auth/logout', 
     async () => {
+        setAuthorized(false);
         return authService.logout();
     }
 );
@@ -75,7 +76,7 @@ export const authSlice = createSlice({
                 state.isLoading = false;
                 state.isSuccess = true;
                 state.user = action.payload;
-                Cookies.set('user', JSON.stringify(action.payload), { sameSite: 'strict', secure: true});
+                Cookies.set('user', JSON.stringify(action.payload), { sameSite: 'strict', secure: true, expires:86400});
                 state.isAuthenticated = true;
             })
             .addCase(signUp.rejected, (state, action) => {
@@ -91,7 +92,7 @@ export const authSlice = createSlice({
                 state.isLoading = false;
                 state.isSuccess = true;
                 state.user = action.payload;
-                Cookies.set('user', JSON.stringify(action.payload), { sameSite: 'strict', secure: true});
+                Cookies.set('user', JSON.stringify(action.payload), { sameSite: 'strict', secure: true, expires: 86400});
                 state.isAuthenticated = true;
             })
             .addCase(login.rejected, (state, action) => {
