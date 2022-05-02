@@ -47,9 +47,9 @@ export class CoursesController {
   @Roles(Role.LECTURER)
   @UseInterceptors(FileInterceptor('courseMaterial', multerOptions))
   @Post('upload')
-  async uploadFile(@Request() req) {
+  async uploadFile(@Request() req, @UploadedFile() file: Express.Multer.File) {
     const body = await req.body;
-    body.file = req.file;
+    body.file = file;
     body.courseId = parseInt(body.courseId);
     console.log(body);
     // perform the magic here

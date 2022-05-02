@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus } from '@nestjs/common';
 import { existsSync, mkdirSync } from 'fs';
-import { diskStorage } from 'multer';
+import { diskStorage, memoryStorage } from 'multer';
 import { extname } from 'path';
 import { v4 as uuid } from 'uuid';
 
@@ -32,20 +32,22 @@ export const multerOptions = {
     }
   },
   // Storage properties
-  storage: diskStorage({
-    // Destination storage path details
-    destination: (req: any, file: any, cb: any) => {
-      const uploadPath = multerConfig.dest;
-      // Create folder if doesn't exist
-      if (!existsSync(uploadPath)) {
-        mkdirSync(uploadPath);
-      }
-      cb(null, uploadPath);
-    },
-    // File modification details
-    filename: (req: any, file: any, cb: any) => {
-      // Calling the callback passing the random name generated with the original extension name
-      cb(null, `${uuid()}${extname(file.originalname)}`);
-    },
-  }),
+  // storage: diskStorage({
+  //   // Destination storage path details
+  //   destination: (req: any, file: any, cb: any) => {
+  //     const uploadPath = multerConfig.dest;
+  //     console.log(uploadPath);
+  //     // Create folder if doesn't exist
+  //     if (!existsSync(uploadPath)) {
+  //       mkdirSync(uploadPath);
+  //     }
+  //     cb(null, uploadPath);
+  //   },
+  //   // File modification details
+  //   filename: (req: any, file: any, cb: any) => {
+  //     // Calling the callback passing the random name generated with the original extension name
+  //     cb(null, `${uuid()}${extname(file.originalname)}`);
+  //   },
+  // }),
+  storage: memoryStorage(),
 };

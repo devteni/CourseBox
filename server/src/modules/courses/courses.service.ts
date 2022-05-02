@@ -2,10 +2,16 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
 import { CreateCourseDto, CreateCourseMaterial } from './dto/create-course.dto';
 import { UpdateCourseDto } from './dto/update-course.dto';
+import { S3 } from 'aws-sdk';
+import { ConfigService } from '@nestjs/config';
+import { v4 as uuid } from 'uuid';
 
 @Injectable()
 export class CoursesService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private configService: ConfigService,
+  ) {}
   create(createCourseDto: CreateCourseDto) {
     // return await this.prisma.course.create({
     //   data
@@ -28,6 +34,16 @@ export class CoursesService {
   }
 
   async uploadCourseMaterial(payload: CreateCourseMaterial) {
+    const s3 = new S3();
+    const uploadResult = await s3
+      .upload({
+        Bucket: this.configService.get('aws_public_bucket_name'),
+        Body: payload.file.buffer,
+        ContentType: payload.file.mimetype,
+        ContentDisposition: `attachment; filename=${payload.file.originalname}`,
+        Key: `${uuid()}-${payload.file.originalname}`,
+      })
+      .promise();
     const courseMaterial = await this.prisma.courseMaterial.create({
       data: {
         title: payload.title,
@@ -37,8 +53,8 @@ export class CoursesService {
     });
     const file = await this.prisma.file.create({
       data: {
-        fileName: payload.file.originalname,
-        url: payload.file.path,
+        fileName: uploadResult.Key,
+        url: uploadResult.Location,
       },
     });
     const updatedCourseMaterial = await this.prisma.courseMaterial.update({
@@ -58,7 +74,7 @@ export class CoursesService {
       },
     });
     // console.log('na here', courseMaterial.fileId);
-    return courseMaterial;
+    return updatedCourseMaterial;
   }
 
   async fetchCourseMaterials(payload) {
@@ -66,7 +82,14 @@ export class CoursesService {
       where: {
         courseId: payload.courseId,
       },
+      select: {
+        title: true,
+        description: true,
+        courseId: true,
+        file: true,
+      },
     });
+
     return courseMaterials;
   }
 }
