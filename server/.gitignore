@@ -14,6 +14,9 @@ lerna-debug.log*
 # file uploads
 /uploads
 
+# Environment variables.
+.env
+
 # OS
 .DS_Store
 
