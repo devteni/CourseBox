@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { LogoutIcon } from '@heroicons/react/solid';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import { useAppDispatch, useAppSelector, useAuth } from '../hooks';
 import { logout } from '../slices/auth/auth';
 
@@ -29,6 +30,7 @@ const authLinks = [
 
 const Navbar: React.FC = () => {
   const dispatch = useAppDispatch();
+  const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const [isDrop, setIsDrop] = useState(false);
   const { user, isAuthenticated} = useAppSelector((state) => state.auth);
@@ -45,6 +47,11 @@ const Navbar: React.FC = () => {
     setIsDrop(!isDrop);
   }
   
+  const handleLogout = () => {
+    dispatch(logout())
+    router.push('/')
+  }
+
   return (
     <>
       {
@@ -68,7 +75,7 @@ const Navbar: React.FC = () => {
               </svg>
             </button>
             <div id="dropdown" className='hidden absolute top-20 right-0 z-10 items-center bg-gray-300 rounded py-1 px-3 mx-2' style={{ minWidth: "10rem" }}>
-              <button onClick={() => dispatch(logout())} className="flex items-center gap-2 py-1 px-1"><LogoutIcon width={30}/>Logout</button>
+              <button onClick={() => handleLogout()} className="flex items-center gap-2 py-1 px-1"><LogoutIcon width={30}/>Logout</button>
             </div>
           </div>
         </header>  
