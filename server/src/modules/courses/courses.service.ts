@@ -5,6 +5,7 @@ import { UpdateCourseDto } from './dto/update-course.dto';
 import { S3 } from 'aws-sdk';
 import { ConfigService } from '@nestjs/config';
 import { v4 as uuid } from 'uuid';
+import { AddDownloadDto } from './dto/add-download-dto';
 
 @Injectable()
 export class CoursesService {
@@ -25,6 +26,7 @@ export class CoursesService {
       },
     });
   }
+
   async findStudentCourses(deptId: number) {
     return await this.prisma.course.findMany({
       where: {
@@ -91,5 +93,33 @@ export class CoursesService {
     });
 
     return courseMaterials;
+  }
+
+  async addDownload(payload: AddDownloadDto) {
+    const existingDownload = await this.prisma.fileDownload.findFirst({
+      where: {
+        fileId: payload.fileId,
+        studentId: payload.studentId,
+      },
+    });
+    if (existingDownload) {
+      return false;
+    } else {
+      await this.prisma.fileDownload.create({
+        data: {
+          fileId: payload.fileId,
+          studentId: payload.studentId,
+        },
+      });
+      return true;
+    }
+  }
+
+  async fetchDownloadCount(fileId: string) {
+    return await this.prisma.fileDownload.count({
+      where: {
+        fileId: fileId,
+      },
+    });
   }
 }

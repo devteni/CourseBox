@@ -13,7 +13,6 @@ import {
   UploadedFile,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
 import { multerOptions } from 'src/config/multer.config';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { Roles } from '../users/decorator/roles.decorator';
@@ -59,5 +58,17 @@ export class CoursesController {
   @Get('/:id')
   async fetchCourseMaterials(@Param('id', ParseIntPipe) id: number) {
     return await this.coursesService.fetchCourseMaterials(id);
+  }
+
+  @Roles(Role.STUDENT)
+  @Post('student/downloads')
+  async addDownload(@Body() payload: any) {
+    return await this.coursesService.addDownload(payload);
+  }
+
+  @Roles(Role.LECTURER)
+  @Get('student/downloads/:fileId')
+  async fetchDownloadCount(@Param('fileId') fileId: string) {
+    return await this.coursesService.fetchDownloadCount(fileId);
   }
 }
