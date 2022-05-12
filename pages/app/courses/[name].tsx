@@ -7,15 +7,12 @@ import { DocumentReportIcon } from '@heroicons/react/solid';
 import { useAppDispatch, useAppSelector } from '../../../hooks';
 import pic from "../../../public/assets/mis.jpg"
 import { fetchCourseMaterials, fetchLecturerCourses} from '../../../slices/course/course';
+import dynamic from 'next/dynamic';
 
-interface material {
-    title: string,
-    description: string,
-    file: {
-        url: string,
-        fileName: string,
-    }
-}
+
+const [CourseMaterial] = [
+    dynamic(() => import("@/components/CourseMaterial"))
+];
 
 type course = {
     id: number,
@@ -37,21 +34,33 @@ type currentUser = {
 interface courseMaterial { 
     title: string;
     description: string;
-    file: {}
+    file: {
+        id: string,
+        url: string,
+        fileName: string,
+    }
 }
 
 const Course = () => {
   const router = useRouter();
   const dispatch = useAppDispatch();
-  const { name } = router.query;
+  let { name } = router.query;
   const { user } = useAppSelector((state) => state.auth);
   const { courses, courseMaterials } = useAppSelector((state) => state.course);
-  const [currentUser, setCurrentUser] = useState<currentUser>({})
+  const [currentUser, setCurrentUser] = useState({})
   const [showModal, setShowModal] = useState(false);
-  const [reportModal, setReportModal] = useState(false);
-  const [validCourse, setValidCourse] = useState({});
+  const [validCourse, setValidCourse] = useState<course>({
+    id: 0,
+    courseCode: '',
+    courseName: '',
+    userId: '',
+    departmentId: '',
+    schoolId: '',
+    courseDesc: '',
+    createdAt: '',
+    modifiedAt: ''
+    });
   const [courseMaterial, setCourseMaterial] = useState<courseMaterial>({ title: "", description: "", file: {} });
-  const fileUrl = 'ftp://';
   const vCourse = courses.find(({courseName}) =>  courseName === name)!; 
   const payload = { ...user };
   payload.courseId = validCourse.id;
@@ -78,15 +87,11 @@ const Course = () => {
         dispatch(fetchCourseMaterials(payload))
     }
 
-    const showReport = async (e: any) => {
-        // const res = await axios.get(`${API_URL}/courses/student/downloads/${e.target.values}`);
-        setReportModal(true);
-    }
     
     useEffect(() => {
         if (user) setCurrentUser(user)
         if (courses.length > 0) {
-            const validCourse = courses.find(({courseName}) =>  courseName === name)!;
+            const validCourse: course = courses.find(({courseName}) =>  courseName === name)!;
             setValidCourse(validCourse);
             payload.courseId = validCourse.id;
             dispatch(fetchCourseMaterials(payload));
@@ -211,75 +216,7 @@ const Course = () => {
         ) : null}
         </>
 
-        <section id="courseMaterials" className='flex flex-row justify-between'>
-            {
-                courseMaterials?.map((el: material, i) => {
-                    if (el.file) {
-                        return (
-                        <div key={i} className='relative w-1/3 h-2/3 border-2 mx-2 border-gray-300 p-4 text-center'>
-                            <p className='uppercase text-base font-bold underline'>{el.title}</p>
-                            <p className='px-3 my-2'>{el.description}</p>
-                            <span className='my-4'>
-                                <a className='p-2 bg-blue-500 rounded text-white' 
-                                    href={el.file.url} target="_blank" download={el.file.fileName} rel="noreferrer">
-                                    Download File
-                                </a>
-                                {
-                                    currentUser.role === 'LECTURER' ?
-                                        <DocumentReportIcon values={`${el.file.id}`}
-                                        onClick={(e) => showReport(e)} 
-                                        className='cursor-pointer text-blue-500 float-right'  width={30}/> :
-                                        ''
-                                }
-                            </span>
-                        </div>
-                        )
-                    }
-                })
-            }
-            {reportModal ? (
-                        <>
-                        <div
-                            className="duration-700 ease-in-out justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none"
-                        >
-                            <div className="relative w-auto my-6 mx-auto max-w-3xl">
-                            {/*content*/}
-                            <div className="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none">
-                                {/*header*/}
-                                <div className="flex items-start justify-between p-5 border-b border-solid border-slate-200 rounded-t">
-                                <h3 className="text-3xl font-semibold">
-                                    Download Report
-                                </h3>
-                                <button
-                                    className="p-1 ml-auto bg-transparent border-0 text-black opacity-5 float-right text-3xl leading-none font-semibold outline-none focus:outline-none"
-                                    onClick={() => setReportModal(false)}
-                                >
-                                    <span className="bg-transparent text-black opacity-5 h-6 w-6 text-2xl block outline-none focus:outline-none">
-                                    ×
-                                    </span>
-                                </button>
-                                </div>
-                                {/*body*/}
-                                <div className="relative p-6 flex-auto">
-                                    <p>0 out of 1 student(s) have downloaded this material.</p>
-                                </div>
-                                {/*footer*/}
-                                <div className="flex items-center justify-end p-6 border-t border-solid border-slate-200 rounded-b">
-                                <button
-                                    className="text-red-500 background-transparent font-bold uppercase px-6 py-2 text-sm outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
-                                    type="button"
-                                    onClick={() => setReportModal(false)}
-                                >
-                                    Close
-                                </button>
-                                </div>
-                            </div>
-                            </div>
-                        </div>
-                        <div className="opacity-25 fixed inset-0 z-40 bg-black"></div>
-                        </>
-                    ) : null}
-        </section>
+        <CourseMaterial courseMaterials={courseMaterials} user={currentUser}/>
     </section>
   )
 }

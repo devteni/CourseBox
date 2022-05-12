@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { HomeIcon, UserIcon, BookmarkAltIcon, AdjustmentsIcon, ClipboardListIcon } from '@heroicons/react/solid'
-import { useAppDispatch, useAppSelector } from "../hooks";
-import { logout } from "../slices/auth/auth";
+import { useAppDispatch, useAppSelector } from "@/hooks";
+import { logout } from "@/slices/auth/auth";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 

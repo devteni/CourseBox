@@ -27,8 +27,13 @@ type lecturer = {
     modifiedAt: string
 }
 
+type Lecturer = {
+    id: string,
+    access_token: string
+}
+
 export const fetchLecturerCourses = createAsyncThunk('/courses/lecturer', 
-    async (user, thunkAPI) => {
+    async (user: Lecturer, thunkAPI) => {
         try {
             return await courseService.fetchLecturerCourses(user.id, user.access_token);;
         } catch(error: any) {
@@ -40,8 +45,13 @@ export const fetchLecturerCourses = createAsyncThunk('/courses/lecturer',
     }
 );
 
+type User = {
+    departmentId: string,
+    access_token: string,
+}
+
 export const fetchCourses = createAsyncThunk('/courses/student', 
-    async (user, thunkAPI) => {
+    async (user: User, thunkAPI) => {
         try {
             return await courseService.fetchCourses(user.departmentId, user.access_token);
         } catch(error: any) {
@@ -53,8 +63,13 @@ export const fetchCourses = createAsyncThunk('/courses/student',
     }
 );
 
+type coursePayload = {
+    courseId: string,
+    access_token: string
+}
+
 export const fetchCourseMaterials = createAsyncThunk('/courses/materials', 
-   async (payload, thunkAPI) => {
+   async (payload: coursePayload, thunkAPI) => {
        try {
            return await courseService.fetchCourseMaterials(payload.courseId, payload.access_token);
        } catch(error: any) {

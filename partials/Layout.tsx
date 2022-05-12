@@ -1,14 +1,17 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import { useAppDispatch, useAppSelector } from '../hooks';
-import { setAuthorized, setUser } from '../slices/auth/auth'
+
+
+import { useAppDispatch, useAppSelector } from '@/hooks';
+import { setAuthorized, setUser } from '@/slices/auth/auth'
+
+import Navbar from '@/partials/Navbar';
 import Sidebar from './Sidebar';
-import styles from '../styles/Home.module.css'
 import Cookies from 'js-cookie';
 
 
 
-function Layout({ children }: any) {
+function Layout({ children, dashboard, setDashboard}: any) {
     const router = useRouter();
     const { isAuthenticated, user } = useAppSelector((state) => state.auth);
     const dispatch = useAppDispatch()
@@ -30,6 +33,7 @@ function Layout({ children }: any) {
                 dispatch(setAuthorized(false));
             } else {
                 dispatch(setUser(JSON.parse(auth)));
+                setDashboard(true);
                 dispatch(setAuthorized(true))
             }
         }
@@ -53,8 +57,9 @@ function Layout({ children }: any) {
 
     return (
         <div className=''>
+            <Navbar />
             <Sidebar />
-            <div className='absolute right-0 bg-[#f6f7f9] lg:w-4/5 h-[100vh] py-2'>
+            <div className={ dashboard ? 'absolute right-0 bg-[#f6f7f9] lg:w-4/5 h-[100vh] py-2': ''}>
                 {children}
             </div>
         </div>

@@ -1,9 +1,10 @@
 import { useState } from 'react';
-import { LogoutIcon } from '@heroicons/react/solid';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useAppDispatch, useAppSelector, useAuth } from '../hooks';
-import { logout } from '../slices/auth/auth';
+
+import { LogoutIcon } from '@heroicons/react/solid';
+import { useAppDispatch, useAppSelector, useAuth } from '@/hooks';
+import { logout } from '@/slices/auth/auth';
 
 const Links = [
   {
