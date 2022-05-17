@@ -21,9 +21,11 @@ interface User {
     email: string;
     uniqueNumber: string;
     password: string;
-    departmentId: number
-    schoolId: number
-    role: string
+    departmentId: number;
+    department: string;
+    school: string;
+    schoolId: number;
+    role: string;
     access_token: string;
     createdAt: string;
     modifiedAt: string
@@ -33,7 +35,7 @@ interface courseMaterial {
     title: string;
     description: string;
     file: {
-        id: number,
+        id: string,
         url: string,
         fileName: string,
     }

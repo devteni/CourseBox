@@ -1,8 +1,28 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import courseService from './courseService';
 
+type course = {
+    id: number,
+    courseCode: string,
+    courseName: string,
+    userId: string,
+    departmentId: string,
+    schoolId: string,
+    courseDesc: string,
+    createdAt: string,
+    modifiedAt: string,
+}
 
-const initialState = {
+interface IState {
+    courses: course[],
+    courseMaterials: [],
+    isError: boolean, 
+    isSuccess: boolean,
+    isLoading: boolean,
+    message: string
+}
+
+const initialState: IState = {
     courses: [],
     courseMaterials: [],
     isError: false,

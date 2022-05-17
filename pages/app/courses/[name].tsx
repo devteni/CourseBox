@@ -1,14 +1,15 @@
-import axios from 'axios';
+import { SyntheticEvent, useEffect, useState } from 'react';
 import Image from 'next/image';
-import { useRouter } from 'next/router'
-import { useEffect, useState } from 'react';
+import { useRouter } from 'next/router';
+import axios from 'axios';
+import dynamic from 'next/dynamic';
+import { toast } from 'react-hot-toast';
+
 import { API_URL } from '../../../constants';
-import { DocumentReportIcon } from '@heroicons/react/solid';
 import { useAppDispatch, useAppSelector } from '../../../hooks';
 import pic from "../../../public/assets/mis.jpg"
 import { fetchCourseMaterials, fetchLecturerCourses} from '../../../slices/course/course';
-import dynamic from 'next/dynamic';
-import { toast } from 'react-hot-toast';
+
 
 
 const [CourseMaterial] = [
@@ -28,18 +29,28 @@ type course = {
 }
 
 type currentUser = { 
-    access_token: string;
-    role: string;
+    id: number
+    firstName: string
+    lastName: string
+    email: string
+    uniqueNumber: string
+    password: string
+    departmentId: number
+    department: string
+    school: string
+    schoolId: number
+    role: string
+    access_token: string
+    createdAt: string
+    modifiedAt: string
 }
 
 interface courseMaterial { 
     title: string;
     description: string;
-    file: {
-        id: string,
-        url: string,
-        fileName: string,
-    }
+    file: { id: string, url: string, fileName: string} | File
+        
+        
 }
 
 const Course = () => {
@@ -48,7 +59,20 @@ const Course = () => {
   let { name } = router.query;
   const { user } = useAppSelector((state) => state.auth);
   const { courses, courseMaterials } = useAppSelector((state) => state.course);
-  const [currentUser, setCurrentUser] = useState({})
+  const [currentUser, setCurrentUser] = useState<currentUser>({id: 0,
+    firstName: "",
+    lastName: "",
+    email: "",
+    uniqueNumber: "",
+    password: "",
+    departmentId: 0,
+    department: "",
+    school: "",
+    schoolId: 0,
+    role: "",
+    access_token: "",
+    createdAt: "",
+    modifiedAt: ""})
   const [showModal, setShowModal] = useState(false);
   const [validCourse, setValidCourse] = useState<course>({
     id: 0,
@@ -61,29 +85,38 @@ const Course = () => {
     createdAt: '',
     modifiedAt: ''
     });
-  const [courseMaterial, setCourseMaterial] = useState<courseMaterial>({ title: "", description: "", file: {} });
+  const [courseMaterial, setCourseMaterial] = useState<courseMaterial>({ title: "", description: "", file: {
+    id: "",
+    url: "",
+    fileName: "",
+  } });
   const vCourse = courses.find(({courseName}) =>  courseName === name)!; 
   const payload = { ...user };
   payload.courseId = validCourse.id;
 
     const closeModal = () => {
         setShowModal(false);
-        setCourseMaterial({title: "", description: "", file: new Blob()})
+        setCourseMaterial({title: "", description: "", file: {id: "",
+        url: "",
+        fileName: "",}});
     }
-    
     const addMaterial = async () => {
         try {
             const data = new FormData();
             data.append('title', courseMaterial.title);
             data.append('courseMaterial', courseMaterial.file);
             data.append('description', courseMaterial.description);
-            data.append('courseId', vCourse.id);
+            data.append('courseId', vCourse.id.toString());
             const res = await axios.post(`${API_URL}/courses/upload`, data, { 
                 headers: {
                     "Authorization": `Bearer ${currentUser.access_token}`
                     }
                 });
-            setCourseMaterial({title: "", description: "", file: new Blob() })
+            setCourseMaterial({title: "", description: "", file: {
+                id: "",
+                url: "",
+                fileName: "",
+              } })
             setShowModal(false);
             toast.success("Course material added successfully");
             dispatch(fetchCourseMaterials(payload))
@@ -99,7 +132,7 @@ const Course = () => {
     useEffect(() => {
         if (user) setCurrentUser(user)
         if (courses.length > 0) {
-            const validCourse: course = courses.find(({courseName}) =>  courseName === name)!;
+            const validCourse = courses.find(({courseName}) =>  courseName === name)!;
             setValidCourse(validCourse);
             payload.courseId = validCourse.id;
             dispatch(fetchCourseMaterials(payload));
