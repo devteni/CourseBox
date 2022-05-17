@@ -6,12 +6,14 @@ import * as yup from 'yup';
 import { Form, Field, Formik } from 'formik';
 import { useAppSelector, useAppDispatch } from "../../hooks";
 import { reset, signUp } from "../../slices/auth/auth";
+import { toast } from "react-hot-toast";
 
 const SignUpSchema = yup.object().shape({
   firstName: yup.string().required('Firstname is required'),
   lastName: yup.string().required('Lastname is required'),
   email: yup.string().email().required('Email is required'),
   school: yup.string().required('School is required'),
+  role: yup.string().required('Role is required'),
   department: yup.string().required('Department is required'),
   password: yup
     .string()
@@ -27,6 +29,7 @@ const initialValues = {
   school: '',
   department: '',
   password: '',
+  role: '',
 };
 
 const Signup: NextPage = () => {
@@ -42,7 +45,7 @@ const Signup: NextPage = () => {
   const { user, isLoading, isError, isSuccess, message } = useAppSelector((state) => state.auth);
 
   useEffect(() => {
-    if(isError) setErr(message);
+    if(isError) toast.error(message || "Signup failed");
     if(isSuccess && Object.keys(user).length !== 0) router.push('/app/dashboard')
     dispatch(reset())
   }, [isError, isSuccess, dispatch, user, message, router]);
@@ -135,26 +138,53 @@ const Signup: NextPage = () => {
                       ) : null}
                     </div>
                   </div>
-                  <div className="w-full mt-4">
-                    <label
-                      htmlFor="email"
-                      className="px-5 py-1.5 text-sm tracking-tighter"
-                    >
-                      Email address
-                    </label>
-                    <Field
-                      id="email"
-                      type="email"
-                      name="email"
-                      value={values.email}
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                      className="py-3 px-5 w-full border-solid border-2 rounded-sm outline-none appearance-none focus:ring-1 focus:border-blue-700"
-                      required
-                    />
-                    {errors.email && touched.email ? (
-                      <div className="text-rose-900">{errors.email}</div>
-                    ) : null}
+                  <div className="grid gap-2 grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2 2xl:grid-cols-2">
+                    <div className="w-full mt-4">
+                      <label
+                        htmlFor="email"
+                        className="px-5 py-1.5 text-sm tracking-tighter"
+                      >
+                        Email address
+                      </label>
+                      <Field
+                        id="email"
+                        type="email"
+                        name="email"
+                        value={values.email}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        className="py-3 px-5 w-full border-solid border-2 rounded-sm outline-none appearance-none focus:ring-1 focus:border-blue-700"
+                        required
+                      />
+                      {errors.email && touched.email ? (
+                        <div className="text-rose-900">{errors.email}</div>
+                      ) : null}
+                    </div>
+                    <div className="w-full mt-4">
+                        <label
+                          htmlFor="role"
+                          className="px-5 pt-1.5 rounded-sm text-sm tracking-tighter"
+                        >
+                          Role
+                        </label>
+                        <Field as="select"
+                          id="role"
+                          type="text"
+                          name="role"
+                          onChange={handleChange}
+                          onBlur={handleBlur}
+                          value={values.role}
+                          className="py-3 px-5 w-full border-solid border-2 rounded-sm outline-none appearance-none focus:ring-1 focus:border-blue-700"
+                          required
+                        >
+                          <option value="">Select a role</option>
+                          <option value={"STUDENT"}>Student</option>
+                          <option value={"LECTURER"}>Lecturer</option>
+                        </Field>
+                        {errors.role && touched.role ? (
+                          <div className="text-rose-900">{errors.role}</div>
+                        ) : null}
+                    </div>
                   </div>
                   <div className="grid gap-2 grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2 2xl:grid-cols-2">
                     <div className="w-full mt-4">
@@ -164,7 +194,7 @@ const Signup: NextPage = () => {
                       >
                         School
                       </label>
-                      <Field
+                      <Field as="select"
                         id="school"
                         type="text"
                         name="school"
@@ -173,7 +203,10 @@ const Signup: NextPage = () => {
                         value={values.school}
                         className="py-3 px-5 w-full border-solid border-2 rounded-sm outline-none appearance-none focus:ring-1 focus:border-blue-700"
                         required
-                      />
+                      >
+                        <option value="">Select a school</option>
+                        <option value={"Yaba College of Technology"}>Yaba College of Technology</option>
+                      </Field>
                       {errors.school && touched.school ? (
                         <div className="text-rose-900">{errors.school}</div>
                       ) : null}
@@ -185,7 +218,7 @@ const Signup: NextPage = () => {
                       >
                         Department
                       </label>
-                      <Field
+                      <Field as="select"
                         id="department"
                         type="text"
                         name="department"
@@ -194,7 +227,10 @@ const Signup: NextPage = () => {
                         value={values.department}
                         className="py-3 px-5 w-full border-solid border-2 rounded-sm outline-none appearance-none focus:ring-1 focus:border-blue-700"
                         required
-                      />
+                        >
+                          <option value="">Select a department</option>
+                        <option value={"Computer science"}>Computer science</option>
+                        </Field>
                       {errors.department && touched.department ? (
                         <div className="text-rose-900">{errors.department}</div>
                       ) : null}

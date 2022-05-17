@@ -6,6 +6,7 @@ import '@/styles/index.scss';
 
 import { store } from '@/store';
 import { useState } from 'react';
+import { Toaster } from 'react-hot-toast';
 
 const [Layout] = [
   dynamic(() => import("@/partials/Layout"))
@@ -16,6 +17,7 @@ function MyApp({ Component, pageProps }: AppProps) {
   return (
     <Provider store={store}>
       <Layout dashboard={dashboard} setDashboard={setDashboard}>
+        <Toaster position="top-center" reverseOrder={false} />
         <Component {...pageProps} />
       </Layout>
     </Provider>

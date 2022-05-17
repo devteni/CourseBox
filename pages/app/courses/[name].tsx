@@ -8,6 +8,7 @@ import { useAppDispatch, useAppSelector } from '../../../hooks';
 import pic from "../../../public/assets/mis.jpg"
 import { fetchCourseMaterials, fetchLecturerCourses} from '../../../slices/course/course';
 import dynamic from 'next/dynamic';
+import { toast } from 'react-hot-toast';
 
 
 const [CourseMaterial] = [
@@ -71,20 +72,27 @@ const Course = () => {
     }
     
     const addMaterial = async () => {
-        const data = new FormData();
-        data.append('title', courseMaterial.title);
-        data.append('courseMaterial', courseMaterial.file);
-        data.append('description', courseMaterial.description);
-        data.append('courseId', vCourse.id);
-        const res = await axios.post(`${API_URL}/courses/upload`, data, { 
-            headers: {
-                "Authorization": `Bearer ${currentUser.access_token}`
-                }
-            });
-        setCourseMaterial({title: "", description: "", file: new Blob() })
-        setShowModal(false);
-        console.log(payload)
-        dispatch(fetchCourseMaterials(payload))
+        try {
+            const data = new FormData();
+            data.append('title', courseMaterial.title);
+            data.append('courseMaterial', courseMaterial.file);
+            data.append('description', courseMaterial.description);
+            data.append('courseId', vCourse.id);
+            const res = await axios.post(`${API_URL}/courses/upload`, data, { 
+                headers: {
+                    "Authorization": `Bearer ${currentUser.access_token}`
+                    }
+                });
+            setCourseMaterial({title: "", description: "", file: new Blob() })
+            setShowModal(false);
+            toast.success("Course material added successfully");
+            dispatch(fetchCourseMaterials(payload))
+        } catch (error: any) {
+            const message = (error.response && 
+                error.response.data && 
+                error.response.data.message) || error.message || error.toString()
+            if(message) toast.error(message || 'An error occurred while uploading course material')
+        }
     }
 
     
