@@ -19,11 +19,11 @@ yarn dev
 - Open [http://localhost:3000](http://localhost:3000) to see the homepage.
 
 
-## Learn More
 
-Learn more about the technologies used.
+## Learn more about the technologies used.
 ----
-- Next.js
+
+### Next.js
 
 To learn more about Next.js, take a look at the following resources:
 
@@ -32,19 +32,19 @@ To learn more about Next.js, take a look at the following resources:
 
 You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
 
-- Redux Toolkit
+### Redux Toolkit
 
 To learn more about Redux Toolkit - a standardised package to write Redux logic,  take a look at the following resources:
 
-- [RTK Documentation](https://redux-toolkit.js.org/introduction/getting-started) - learn about Redux Toolkit and how to use it with TypeScript.
+### [RTK Documentation](https://redux-toolkit.js.org/introduction/getting-started) - learn about Redux Toolkit and how to use it with TypeScript.
 
 
-- TailwindCSS
+### TailwindCSS
 
 To learn more about TailwindCSS, take a look at the following resources:
 - [TailwindCSS Documentation](https://tailwindcss.com) - learn about TailwindCSS features and the styling guide.
 
-- SASS
+### SASS
 
 To learn more about SASS, take a look at the following resources:
 - [SASS Documentation](https://sass-lang.com/documentation) - learn about SASS.
