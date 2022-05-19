@@ -21,7 +21,6 @@ yarn dev
 
 
 ## Learn more about the technologies used.
-----
 
 ### Next.js
 
