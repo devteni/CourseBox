@@ -1,17 +1,10 @@
 import type { NextPage } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
-import { useAppDispatch, useAppSelector } from "../../hooks";
-import Sidebar from "../../partials/Sidebar";
-import { setUser } from "../../slices/auth/auth";
 import hero from "../../public/assets/learning.jpg"
 
 
 const Dashboard: NextPage = () => {
-    const { user } = useAppSelector((state) => state.auth);
-
     return(
         <div>
             <section className="text-gray-600 body-font">
