@@ -1,4 +1,4 @@
-import { SyntheticEvent, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import axios from 'axios';
@@ -6,52 +6,15 @@ import dynamic from 'next/dynamic';
 import { toast } from 'react-hot-toast';
 
 import { API_URL } from '../../../constants';
-import { useAppDispatch, useAppSelector } from '../../../hooks';
+import { useAppDispatch, useAppSelector } from '@/hooks';
 import pic from "../../../public/assets/mis.jpg"
-import { fetchCourseMaterials, fetchLecturerCourses} from '../../../slices/course/course';
-
+import { fetchCourseMaterials, fetchLecturerCourses} from '@/slices/course/course';
+import { Course, CourseMaterial, CurrentUser } from '@/types';
 
 
 const [CourseMaterial] = [
     dynamic(() => import("@/components/CourseMaterial"))
 ];
-
-type course = {
-    id: number,
-    courseCode: string,
-    courseName: string,
-    userId: string,
-    departmentId: string,
-    schoolId: string,
-    courseDesc: string,
-    createdAt: string,
-    modifiedAt: string,
-}
-
-type currentUser = { 
-    id: number
-    firstName: string
-    lastName: string
-    email: string
-    uniqueNumber: string
-    password: string
-    departmentId: number
-    department: string
-    school: string
-    schoolId: number
-    role: string
-    access_token: string
-    createdAt: string
-    modifiedAt: string
-}
-
-interface courseMaterial { 
-    title: string;
-    description: string;
-    file: { id: string, url: string, fileName: string} | File
-        
-        
-}
 
 const Course = () => {
   const router = useRouter();
@@ -59,7 +22,7 @@ const Course = () => {
   let { name } = router.query;
   const { user } = useAppSelector((state) => state.auth);
   const { courses, courseMaterials } = useAppSelector((state) => state.course);
-  const [currentUser, setCurrentUser] = useState<currentUser>({id: 0,
+  const [currentUser, setCurrentUser] = useState<CurrentUser>({id: 0,
     firstName: "",
     lastName: "",
     email: "",
@@ -74,7 +37,7 @@ const Course = () => {
     createdAt: "",
     modifiedAt: ""})
   const [showModal, setShowModal] = useState(false);
-  const [validCourse, setValidCourse] = useState<course>({
+  const [validCourse, setValidCourse] = useState<Course>({
     id: 0,
     courseCode: '',
     courseName: '',
@@ -85,7 +48,7 @@ const Course = () => {
     createdAt: '',
     modifiedAt: ''
     });
-  const [courseMaterial, setCourseMaterial] = useState<courseMaterial>({ title: "", description: "", file: {
+  const [courseMaterial, setCourseMaterial] = useState<CourseMaterial>({ title: "", description: "", file: {
     id: "",
     url: "",
     fileName: "",

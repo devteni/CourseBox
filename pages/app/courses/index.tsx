@@ -1,8 +1,8 @@
 import type { NextPage } from "next";
 import Link from "next/link";
 import { useEffect } from "react";
-import { useAppDispatch, useAppSelector } from "../../../hooks";
-import { fetchCourses, fetchLecturerCourses, setCourses } from "../../../slices/course/course";
+import { useAppDispatch, useAppSelector } from "@/hooks";
+import { fetchCourses, fetchLecturerCourses, setCourses } from "@/slices/course/course";
 
 
 const Index: NextPage = () => {
