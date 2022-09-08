@@ -107,9 +107,9 @@ const Course = () => {
   return (
     <section className="text-gray-600 body-font">
         <div className="container mx-auto flex px-5 py-24 md:flex-row flex-col items-center">
-        <div className="lg:max-w-lg lg:w-full md:w-1/2 w-5/6 mb-10 md:mb-0">
-            <Image layout='responsive' width={200} height={200} className="object-cover object-center rounded" alt="hero" src={pic} />
-        </div>
+            <div className="lg:max-w-lg lg:w-full md:w-1/2 w-5/6 mb-10 md:mb-0">
+                <Image layout='responsive' width={200} height={200} className="object-cover object-center rounded" alt="hero" src={pic} />
+            </div>
             <div className="lg:flex-grow md:w-1/2 lg:pl-24 md:pl-16 flex flex-col md:items-start md:text-left items-center text-center">
                 <h1 className="title-font sm:text-4xl text-3xl mb-4 font-medium text-gray-900 uppercase">{name}
                 <br className="hidden lg:inline-block" /><small>{}</small>
@@ -123,15 +123,11 @@ const Course = () => {
 
         {/* Add new material modal */}
         <>
-        {showModal ? (
+        {showModal && (
             <>
-            <div
-                className="duration-700 ease-in-out justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none"
-            >
+             <div className="duration-700 ease-in-out justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none">
                 <div className="relative w-auto my-6 mx-auto max-w-3xl">
-                {/*content*/}
                 <div className="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none">
-                    {/*header*/}
                     <div className="flex items-start justify-between p-5 border-b border-solid border-slate-200 rounded-t">
                     <h3 className="text-3xl font-semibold">
                         Upload course material
@@ -217,7 +213,7 @@ const Course = () => {
             </div>
             <div className="opacity-25 fixed inset-0 z-40 bg-black"></div>
             </>
-        ) : null}
+        )}
         </>
 
         <CourseMaterial courseMaterials={courseMaterials} user={currentUser}/>
